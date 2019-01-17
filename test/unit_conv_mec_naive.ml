@@ -2,7 +2,7 @@
 
 open Owl_types
 
-module N = Owl_dense_ndarray.S
+module N = Owl_dense_ndarray_algodiff.S
 
 
 module type CONV_IMPL = sig

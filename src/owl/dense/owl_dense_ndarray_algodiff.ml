@@ -17,20 +17,15 @@ module S = struct
   include Owl_dense_ndarray_s
   include Operator
   module Scalar = Owl_maths
-  module Linalg = Owl_linalg_d
+  module Linalg = struct
+    include Owl_linalg_s
+    let qr x = let q, r, _ = qr x in q, r
+  end
 
-  (* inject function aliases *)
-  let inv = Owl_linalg_s.inv
-
+  let diag ?(k=0) x = Owl_dense_ndarray_generic.diag ~k x
   let tril ?(k=0) x = Owl_dense_matrix_generic.tril ~k x
-
   let triu ?(k=0) x = Owl_dense_matrix_generic.triu ~k x
 
-  let qr x =
-    let q, r, _ = Owl_linalg_s.qr ~thin:true ~pivot:false x in
-    (q,r)
-
-  let lyapunov = Owl_linalg_s.lyapunov
 end
 
 
@@ -38,23 +33,15 @@ module D = struct
   include Owl_dense_ndarray_d
   include Operator
   module Scalar = Owl_maths
-  module Linalg = Owl_linalg_d
+  module Linalg = struct 
+    include Owl_linalg_d
+    let qr x = let q, r, _ = qr x in q, r
+  end
 
-  (* inject function aliases *)
-
-  let inv = Owl_linalg_d.inv
-
-  let mpow = Owl_linalg_d.mpow
-
+  let diag ?(k=0) x = Owl_dense_ndarray_generic.diag ~k x
   let tril ?(k=0) x = Owl_dense_matrix_generic.tril ~k x
-
   let triu ?(k=0) x = Owl_dense_matrix_generic.triu ~k x
 
-  let qr x =
-    let q, r, _ = Owl_linalg_d.qr ~thin:true ~pivot:false x in
-    (q,r)
-
-  let lyapunov = Owl_linalg_d.lyapunov
 end
 
 

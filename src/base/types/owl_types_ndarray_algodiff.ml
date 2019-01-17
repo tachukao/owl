@@ -8,6 +8,10 @@ module type Sig = sig
 
   include Owl_types_ndarray_eltcmp.Sig
 
+  val triu: ?k:int -> arr -> arr
+
+  val tril: ?k:int -> arr -> arr
+
   module Scalar : sig
 
     val add : elt -> elt -> elt
@@ -76,7 +80,14 @@ module type Sig = sig
 
   end
 
-  module Linalg : sig end
+  module Linalg : sig 
 
+    val inv : arr -> arr 
+
+    val qr : arr -> arr * arr 
+
+    val lyapunov: arr -> arr -> arr
+
+  end
 
 end

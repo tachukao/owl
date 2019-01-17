@@ -6,8 +6,8 @@
 (** Functor to create neural networks of different precision. *)
 
 module Make_Embedded
-  (A : Owl_types_ndarray_algodiff.Sig)
-  = struct
+    (A : Owl_types_ndarray_algodiff.Sig)
+= struct
 
   include
     Owl_neural_graph.Make (
@@ -22,8 +22,8 @@ end
 
 
 module Flatten
-  (Graph : Owl_neural_graph_sig.Sig)
-  = struct
+    (Graph : Owl_neural_graph_sig.Sig)
+= struct
 
   (* module aliases: graphical network & parallel *)
 
@@ -54,8 +54,8 @@ end
 
 
 module Make
-  (A : Owl_types_ndarray_algodiff.Sig)
-  = struct
+    (A : Owl_types_ndarray_algodiff.Sig)
+= struct
 
   include Flatten (Make_Embedded (A))
 

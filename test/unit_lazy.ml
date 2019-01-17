@@ -2,7 +2,7 @@
 
 open Owl
 
-module M = Owl.Lazy.Make (Arr)
+module M = Owl.Lazy.Make (Owl_dense_ndarray_algodiff.D)
 
 (* some test input *)
 let x0 = Arr.zeros [|3; 4|]

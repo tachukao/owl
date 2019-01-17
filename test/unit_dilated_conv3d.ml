@@ -2,7 +2,7 @@
 
 open Owl_types
 
-module N = Owl.Dense.Ndarray.S
+module N = Owl_dense_ndarray_algodiff.S
 
 
 (* Functions used in tests *)

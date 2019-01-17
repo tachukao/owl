@@ -10,9 +10,7 @@ module type Sig = sig
 
   module A : Owl_types_ndarray_algodiff.Sig
 
-
   (** {6 Type definition} *)
-
 
   type trace_op
   (** Trace type *)

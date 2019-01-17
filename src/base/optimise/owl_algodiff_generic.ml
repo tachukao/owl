@@ -964,7 +964,7 @@ module Make
 
     and inv a =
       let ff = function
-        | Arr a    -> Arr A.(inv a)
+        | Arr a    -> Arr A.Linalg.(inv a)
         | _        -> error_uniop "inv" a
       in
       let fd a = inv a in
@@ -974,7 +974,7 @@ module Make
 
     and qr a =
       let ff = function
-        | Arr a -> let q, r = A.(qr a) in (Arr q, Arr r)
+        | Arr a -> let q, r = A.Linalg.(qr a) in (Arr q, Arr r)
         | _     -> error_uniop "qr" a
       in
       let fd a = qr a in
@@ -994,7 +994,7 @@ module Make
     and lyapunov a q =
       let ff a q =
         match a, q with
-        | Arr a, Arr q       -> Arr A.(lyapunov a q)
+        | Arr a, Arr q       -> Arr A.Linalg.(lyapunov a q)
         | _                  -> error_binop "lyapunov" a q
       in
       let fd a q = lyapunov a q in

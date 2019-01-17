@@ -515,9 +515,6 @@ module Make (A : Ndarray_Mutable) : sig
   val copy_col_to : arr -> 'a -> 'b -> unit
   (** TODO *)
 
-  val inv : arr -> arr
-  (** TODO *)
-
   val trace : arr -> elt
   (** TODO *)
 
@@ -572,5 +569,11 @@ module Make (A : Ndarray_Mutable) : sig
   val eval_graph : graph -> unit
   (** TODO *)
 
+  module Linalg : sig
+
+    val inv : arr -> arr
+    (** TODO *)
+
+  end
 
 end

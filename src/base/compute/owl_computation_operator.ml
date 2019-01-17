@@ -8,8 +8,8 @@ open Owl_types
 (* Functor of making Lazy module of different number types *)
 
 module Make
-  (Symbol : Owl_computation_symbol_sig.Sig)
-  = struct
+    (Symbol : Owl_computation_symbol_sig.Sig)
+= struct
 
   module Symbol = Symbol
 
@@ -459,12 +459,6 @@ module Make
 
   let copy_col_to x _y _j = make_then_connect CopyColTo [|arr_to_node x|] |> ignore
 
-  let inv x = make_then_connect Inv [|arr_to_node x|] |> node_to_arr
-
-  let qr _x = raise Owl_exception.NOT_IMPLEMENTED 
-  
-  let lyapunov _a _q = raise Owl_exception.NOT_IMPLEMENTED 
-  
   let diag ?k _x = k |> ignore; raise Owl_exception.NOT_IMPLEMENTED 
 
   let tril?k _x = k |> ignore; raise Owl_exception.NOT_IMPLEMENTED 
@@ -571,6 +565,15 @@ module Make
 
   end
 
+  module Linalg = struct 
+
+    let inv x = make_then_connect Inv [|arr_to_node x|] |> node_to_arr
+
+    let qr _x = raise Owl_exception.NOT_IMPLEMENTED 
+
+    let lyapunov _a _q = raise Owl_exception.NOT_IMPLEMENTED 
+
+  end
 
 end
 
