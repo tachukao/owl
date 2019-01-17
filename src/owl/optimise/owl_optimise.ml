@@ -19,11 +19,11 @@ end
 
 
 (* Optimise module of Float32 type *)
-module S = Make_Embedded (Owl_dense_ndarray.S)
+module S = Make_Embedded (Owl_dense_ndarray_algodiff.S)
 
 
 (* Optimise module of Float64 type *)
-module D = Make_Embedded (Owl_dense_ndarray.D)
+module D = Make_Embedded (Owl_dense_ndarray_algodiff.D)
 
 
 (* ends here *)

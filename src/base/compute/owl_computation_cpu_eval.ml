@@ -27,7 +27,6 @@ module Make
     set_active_node b x;
     validate x
 
-
   (* core evaluation function *)
 
   let rec _eval_terms nodes =

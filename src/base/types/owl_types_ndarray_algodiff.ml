@@ -8,7 +8,6 @@ module type Sig = sig
 
   include Owl_types_ndarray_eltcmp.Sig
 
-
   module Scalar : sig
 
     val add : elt -> elt -> elt
@@ -76,6 +75,8 @@ module type Sig = sig
     val sigmoid : elt -> elt
 
   end
+
+  module Linalg : sig end
 
 
 end

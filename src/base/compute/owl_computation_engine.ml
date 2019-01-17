@@ -57,4 +57,6 @@ module Flatten
 
   let number = A.number
 
+
+
 end
