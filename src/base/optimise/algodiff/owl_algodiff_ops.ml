@@ -1117,55 +1117,79 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
     and _concatenate =
       lazy
         (fun ~axis a ->
-          (* mode: 0 constant, 1 reverse, 2 tangent *)
-          let mode = ref 0 in
-          let idxs = ref [] in
-          let ai_ref = ref 0 in
-          let cp =
-            Array.mapi
-              (fun i x ->
-                match x, !mode with
-                | Arr _, _ -> unpack_arr x
-                | DR (_, _, _, _, ai, _), 0 ->
-                  ai_ref := ai;
-                  idxs := i :: !idxs;
-                  mode := 1;
-                  unpack_arr x
-                | DR (_, _, _, _, ai, _), 1 ->
-                  ai_ref := ai;
-                  idxs := i :: !idxs;
-                  unpack_arr x
-                | DF (_, _, ai), 0 ->
-                  ai_ref := ai;
-                  unpack_arr x
-                | DF (_, _, ai), 2 ->
-                  ai_ref := ai;
-                  unpack_arr x
-                | _ -> error_uniop "concatenate: inconsistent array" x)
+          let _, t, mode, idxs =
+            Array.fold_left
+              (fun (i, t, m, idxs) x ->
+                match m, x with
+                | _, F _ -> assert false
+                | _, Arr _ -> succ i, t, m, idxs
+                | `n, DR (_, _, _, _, t', _) -> succ i, t', `r, [ i ]
+                | `f, DR (_, _, _, _, t', _) ->
+                  if t' > t
+                  then succ i, t', `r, []
+                  else if t' = t
+                  then failwith "clash"
+                  else succ i, t, `f, idxs
+                | `r, DR (_, _, _, _, t', _) ->
+                  if t' > t
+                  then succ i, t', `r, []
+                  else if t' = t
+                  then succ i, t', `r, i :: idxs
+                  else succ i, t, m, idxs
+                | `n, DF (_, _, t') -> succ i, t', `f, [ i ]
+                | `f, DF (_, _, t') ->
+                  if t' > t
+                  then succ i, t', `f, []
+                  else if t' = t
+                  then succ i, t', `f, i :: idxs
+                  else succ i, t, `f, idxs
+                | `r, DF (_, _, t') ->
+                  if t' > t
+                  then succ i, t', `f, []
+                  else if t' = t
+                  then failwith "clash"
+                  else succ i, t, `r, idxs
+                | _ -> assert false)
+              (0, -10000, `n, [])
               a
-            |> A.concatenate ~axis
-            |> pack_arr
           in
-          match !mode with
-          | 0 -> cp
-          | 1 ->
-            let idxs = List.rev !idxs in
-            let adjoint _cp ca t =
-              let ca_arr = split ~axis (Array.map (fun x -> (shape x).(axis)) a) !ca in
-              t |> List.(append (map (fun i -> ca_arr.(i), a.(i)) idxs))
+          match mode with
+          | `n -> Array.map unpack_arr a |> A.concatenate ~axis |> pack_arr
+          | `f ->
+            let cp =
+              Array.map
+                (fun x ->
+                  match x with
+                  | DF (p, _, t') -> if t = t' then p else x
+                  | x -> x)
+                a
+              |> concatenate ~axis
             in
-            let register t = List.append List.(map (fun i -> a.(i)) idxs) t in
-            let label = "Concatenate_D", List.(map (fun i -> a.(i)) idxs) in
-            DR (cp, ref (zero cp), (adjoint, register, label), ref 0, !ai_ref, ref 0)
-          | 2 ->
             let at =
               a
               |> Array.map (fun x -> x |> tangent |> unpack_arr)
               |> A.concatenate ~axis
               |> pack_arr
             in
-            DF (cp, at, !ai_ref)
-          | _ -> error_uniop "concatenate" a.(0))
+            DF (cp, at, t)
+          | `r ->
+            let cp =
+              Array.map
+                (fun x ->
+                  match x with
+                  | DR (p, _, _, _, t', _) -> if t = t' then p else x
+                  | x -> x)
+                a
+              |> concatenate ~axis
+            in
+            let idxs = List.rev idxs in
+            let adjoint _cp ca t =
+              let ca_arr = split ~axis (Array.map (fun x -> (shape x).(axis)) a) !ca in
+              t |> List.(append (map (fun i -> ca_arr.(i), a.(i)) idxs))
+            in
+            let register t = List.append List.(map (fun i -> a.(i)) idxs) t in
+            let label = "Concatenate_D", List.(map (fun i -> a.(i)) idxs) in
+            DR (cp, ref (zero cp), (adjoint, register, label), ref 0, t, ref 0))
 
 
     and concatenate ~axis = Lazy.force _concatenate ~axis
