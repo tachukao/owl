@@ -963,27 +963,43 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
              let ff_ab a _b = error_uniop label (pack_elt a)
              let ff_ba _a b = error_uniop label (pack_elt b)
              let ff_bb a b = Arr A.(concatenate ~axis [| a; b |])
-             let df_da _cp _ap at bp = concat axis at (zero bp)
-             let df_db _cp ap _bp bt = concat axis (zero ap) bt
-             let df_dab _cp _ap at _bp bt = concat axis at bt
+             let df_da _cp _ap at bp = concat ~axis at (zero bp)
+             let df_db _cp ap _bp bt = concat ~axis (zero ap) bt
+             let df_dab _cp _ap at _bp bt = concat ~axis at bt
 
-             let dr_ab a b _cp ca =
-               let s = split ~axis [| (shape a).(axis); (shape b).(axis) |] !ca in
-               s.(0), s.(1)
+             let dr_ab a _b _cp ca =
+               let sa = shape a in
+               let l = sa.(axis) in
+               let dim = Array.length sa in
+               ( get_slice
+                   (List.init dim (fun i ->
+                        if i = axis then [ 0; pred l ] else [ 0; -1 ]))
+                   !ca
+               , get_slice
+                   (List.init dim (fun i -> if i = axis then [ l; -1 ] else [ 0; -1 ]))
+                   !ca )
 
 
-             let dr_a a b _cp ca =
-               let s = split ~axis [| (shape a).(axis); (shape b).(axis) |] !ca in
-               s.(0)
+             let dr_a a _b _cp ca =
+               let sa = shape a in
+               let l = sa.(axis) in
+               let dim = Array.length sa in
+               get_slice
+                 (List.init dim (fun i -> if i = axis then [ 0; pred l ] else [ 0; -1 ]))
+                 !ca
 
 
-             let dr_b a b _cp ca =
-               let s = split ~axis [| (shape a).(axis); (shape b).(axis) |] !ca in
-               s.(1)
+             let dr_b a _b _cp ca =
+               let sa = shape a in
+               let l = sa.(axis) in
+               let dim = Array.length sa in
+               get_slice
+                 (List.init dim (fun i -> if i = axis then [ l; -1 ] else [ 0; -1 ]))
+                 !ca
            end : Piso))
 
 
-    and concat axis = Lazy.force (_concat axis)
+    and concat ~axis = Lazy.force (_concat axis)
     and to_rows a = Array.init (row_num a) (fun i -> get_row a i)
 
     and of_rows a =
