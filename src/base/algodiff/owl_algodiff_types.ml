@@ -9,8 +9,8 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
     | Arr of A.arr
     (* primal, tangent, tag *)
     | DF  of t * t * int
-    (* primal, adjoint, op, fanout, tag, tracker *)
-    | DR  of t * t ref * op * int ref * int * int ref
+    (* primal, adjoint, op, fanout, tag *)
+    | DR  of t * t ref * op * int ref * int
 
   and adjoint = t -> t ref -> (t * t) list -> (t * t) list
 

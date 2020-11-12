@@ -27,13 +27,13 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
 
   let primal = function
     | DF (ap, _, _)          -> ap
-    | DR (ap, _, _, _, _, _) -> ap
+    | DR (ap, _, _, _, _) -> ap
     | ap                     -> ap
 
 
   let rec primal' = function
     | DF (ap, _, _)          -> primal' ap
-    | DR (ap, _, _, _, _, _) -> primal' ap
+    | DR (ap, _, _, _, _) -> primal' ap
     | ap                     -> ap
 
 
@@ -41,7 +41,7 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
     | F _                    -> F A.(float_to_elt 0.)
     | Arr ap                 -> Arr A.(zeros (shape ap))
     | DF (ap, _, _)          -> ap |> primal' |> zero
-    | DR (ap, _, _, _, _, _) -> ap |> primal' |> zero
+    | DR (ap, _, _, _, _) -> ap |> primal' |> zero
 
 
   let tangent = function
@@ -52,13 +52,13 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
 
   let adjref = function
     | DF _                   -> failwith "error: no adjref for DF"
-    | DR (_, at, _, _, _, _) -> at
+    | DR (_, at, _, _, _) -> at
     | ap                     -> ref (zero ap)
 
 
   let adjval = function
     | DF _                   -> failwith "error: no adjval for DF"
-    | DR (_, at, _, _, _, _) -> !at
+    | DR (_, at, _, _, _) -> !at
     | ap                     -> zero ap
 
 
@@ -169,7 +169,7 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
     match x with
     | F _a                          -> Printf.sprintf "[%s]" (deep_info x)
     | DF (ap, _at, ai)              -> Printf.sprintf "[DF tag:%i ap:%s]" ai (deep_info ap)
-    | DR (ap, _at, _ao, _af, ai, _) ->
+    | DR (ap, _at, _ao, _af, ai) ->
       Printf.sprintf "[DR tag:%i ap:%s]" ai (deep_info ap)
     | _                             -> Printf.sprintf "[%s]" (deep_info x)
 

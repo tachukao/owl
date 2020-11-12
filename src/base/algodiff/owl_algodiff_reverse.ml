@@ -19,11 +19,10 @@ struct
       | []     -> ()
       | x :: t ->
         (match x with
-        | DR (_cp, aa, (_, register, _), af, _ai, tracker) ->
+        | DR (_cp, aa, (_, register, _), fanout, _ai) ->
           aa := reset_zero !aa;
-          af := !af + 1;
-          tracker := succ !tracker;
-          if !af = 1 && !tracker = 1 then reset (register t) else reset t
+          fanout := succ !fanout;
+          if !fanout = 1 then reset (register t) else reset t
         | _ -> reset t)
     in
     reset [ x ]
@@ -35,13 +34,12 @@ struct
       | []          -> ()
       | (v, x) :: t ->
         (match x with
-        | DR (cp, aa, (adjoint, _, _), af, _ai, tracker) ->
+        | DR (cp, aa, (adjoint, _, _), fanout, _ai) ->
           aa := reverse_add !aa v;
-          (af := Stdlib.(!af - 1));
-          if !af = 0 && !tracker = 1
+          if !fanout = 1
           then push (adjoint cp aa t)
           else (
-            tracker := pred !tracker;
+            fanout := pred !fanout;
             push t)
         | _ -> push t)
     in

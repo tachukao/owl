@@ -929,11 +929,11 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       match a with
       | Arr ap                  -> F (A.get ap [| i; j |])
       | DF (ap, at, ai)         -> DF (get_item ap i j, get_item at i j, ai)
-      | DR (ap, _, _, _, ai, _) ->
+      | DR (ap, _, _, _, ai) ->
         let reverse _ap ca t = (set_item (zero a) i j (sum' !ca), a) :: t in
         let input t = a :: t in
         let label = "Get_Item", [ a ] in
-        DR (get_item ap i j, ref (pack_flt 0.), (reverse, input, label), ref 0, ai, ref 0)
+        DR (get_item ap i j, ref (pack_flt 0.), (reverse, input, label), ref 0, ai)
       | _                       -> error_uniop "get_item" a
 
 
@@ -1441,7 +1441,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           a |> Array.map (fun x -> x |> tangent |> unpack_arr) |> A.of_rows |> pack_arr
         in
         DF (ap, at, ai)
-      | DR (_, _, _, _, ai, _) ->
+      | DR (_, _, _, _, ai) ->
         let ap = a |> Array.map (fun x -> x |> primal) in
         let cp = ap |> Array.map (fun x -> x |> unpack_arr) |> A.of_rows |> pack_arr in
         let reverse _ap ca t =
@@ -1449,7 +1449,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         in
         let input t = List.append (Array.to_list a) t in
         let label = "Of_Rows_D", Array.to_list a in
-        DR (cp, ref (zero cp), (reverse, input, label), ref 0, ai, ref 0)
+        DR (cp, ref (zero cp), (reverse, input, label), ref 0, ai)
       | _                      -> error_uniop "of_rows a.(0)" a.(0)
 
 
@@ -1469,11 +1469,11 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                      | F _, _ -> ()
                      | Arr _, _ ->
                        error_uniop "of_arrays: array elements should be F not Arr" x
-                     | DR (_, _, _, _, ai, _), `normal ->
+                     | DR (_, _, _, _, ai), `normal ->
                        mode := `reverse;
                        ai_ref := ai;
                        idxs := [ i, j ]
-                     | DR (_, _, _, _, ai, _), `reverse ->
+                     | DR (_, _, _, _, ai), `reverse ->
                        if ai > !ai_ref
                        then (
                          idxs := [ i, j ];
@@ -1481,7 +1481,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                        else if ai = !ai_ref
                        then idxs := (i, j) :: !idxs
                        else ()
-                     | DR (_, _, _, _, ai, _), `forward ->
+                     | DR (_, _, _, _, ai), `forward ->
                        if ai > !ai_ref
                        then (
                          mode := `reverse;
@@ -1519,7 +1519,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
               Array.map
                 (Array.map (fun x ->
                      match x with
-                     | DR (p, _, _, _, ai, _) -> if ai = !ai_ref then p else x
+                     | DR (p, _, _, _, ai) -> if ai = !ai_ref then p else x
                      | x                      -> x))
                 a
               |> of_arrays
@@ -1533,7 +1533,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             in
             let input t = List.(append (map (fun (i, j) -> a.(i).(j)) idxs) t) in
             let label = "Of_Arrays_D", List.map (fun (i, j) -> a.(i).(j)) idxs in
-            DR (cp, ref (zero cp), (reverse, input, label), ref 0, !ai_ref, ref 0)
+            DR (cp, ref (zero cp), (reverse, input, label), ref 0, !ai_ref)
           | `forward ->
             let cp =
               Array.map
