@@ -1902,13 +1902,19 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
              let ff_arr_arr a q = Arr A.(Linalg.lyapunov a q)
 
              let df_a cp ap at _qp =
-               lyapunov ap (neg ((at *@ cp) + (cp *@ transpose at)))
+               let tmp = at *@ cp in
+               lyapunov ap (neg (tmp + transpose tmp))
 
 
-             let df_b _cp ap _qp qt = lyapunov ap qt
+             let df_b _cp ap _qp qt =
+               let qt = pack_flt 0.5 * (qt + transpose qt) in
+               lyapunov ap qt
+
 
              let df_ab cp ap at _qp qt =
-               lyapunov ap (neg ((at *@ cp) + (cp *@ transpose at))) + lyapunov ap qt
+               let qt = pack_flt 0.5 * (qt + transpose qt) in
+               let tmp = at *@ cp in
+               lyapunov ap (neg (tmp + transpose tmp)) + lyapunov ap qt
 
 
              let dr_ab a _b cp ca =
