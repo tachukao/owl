@@ -111,4 +111,17 @@ module type Sig = sig
 
   val build_aiso : (module Aiso) -> t array -> t
   (** build array input single output operations *)
+
+  module type Aiao = sig
+    val label : string
+
+    val ff : t array -> t array
+
+    val df : int list -> t array -> t array -> t array -> t
+
+    val dr : int list -> t array -> t ref array -> t ref array -> t list
+  end
+
+  val build_aiao : (module Aiao) -> t array -> t array
+  (** build array input array output operations *)
 end

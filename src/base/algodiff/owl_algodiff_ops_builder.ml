@@ -380,6 +380,40 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       f
 
 
+  let build_info =
+    Array.fold_left
+      (fun (i, t, m, idxs) x ->
+        match m, x with
+        | _, F _ | _, Arr _ -> succ i, t, m, idxs
+        | `normal, DR (_, _, _, _, t', _) -> succ i, t', `reverse, [ i ]
+        | `forward, DR (_, _, _, _, t', _) ->
+          if t' > t
+          then succ i, t', `reverse, []
+          else if t' = t
+          then failwith "error: forward and reverse clash on the same level"
+          else succ i, t, `forward, idxs
+        | `reverse, DR (_, _, _, _, t', _) ->
+          if t' > t
+          then succ i, t', `reverse, []
+          else if t' = t
+          then succ i, t', `reverse, i :: idxs
+          else succ i, t, m, idxs
+        | `normal, DF (_, _, t') -> succ i, t', `forward, [ i ]
+        | `forward, DF (_, _, t') ->
+          if t' > t
+          then succ i, t', `forward, []
+          else if t' = t
+          then succ i, t', `forward, i :: idxs
+          else succ i, t, `forward, idxs
+        | `reverse, DF (_, _, t') ->
+          if t' > t
+          then succ i, t', `forward, []
+          else if t' = t
+          then failwith "error: forward and reverse clash on the same level"
+          else succ i, t, `reverse, idxs)
+      (0, -10000, `normal, [])
+
+
   module type Aiso = sig
     val label : string
 
@@ -390,80 +424,110 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
     val dr : int list -> t array -> t -> t ref -> t list
   end
 
-  let build_aiso =
-    let build_info =
-      Array.fold_left
-        (fun (i, t, m, idxs) x ->
-          match m, x with
-          | _, F _ | _, Arr _ -> succ i, t, m, idxs
-          | `normal, DR (_, _, _, _, t', _) -> succ i, t', `reverse, [ i ]
-          | `forward, DR (_, _, _, _, t', _) ->
-            if t' > t
-            then succ i, t', `reverse, []
-            else if t' = t
-            then failwith "error: forward and reverse clash on the same level"
-            else succ i, t, `forward, idxs
-          | `reverse, DR (_, _, _, _, t', _) ->
-            if t' > t
-            then succ i, t', `reverse, []
-            else if t' = t
-            then succ i, t', `reverse, i :: idxs
-            else succ i, t, m, idxs
-          | `normal, DF (_, _, t') -> succ i, t', `forward, [ i ]
-          | `forward, DF (_, _, t') ->
-            if t' > t
-            then succ i, t', `forward, []
-            else if t' = t
-            then succ i, t', `forward, i :: idxs
-            else succ i, t, `forward, idxs
-          | `reverse, DF (_, _, t') ->
-            if t' > t
-            then succ i, t', `forward, []
-            else if t' = t
-            then failwith "error: forward and reverse clash on the same level"
-            else succ i, t, `reverse, idxs)
-        (0, -10000, `normal, [])
+  let build_aiso (module S : Aiso) =
+    let rec f a =
+      let _, t, mode, idxs = build_info a in
+      let idxs = idxs |> List.rev in
+      match mode with
+      | `normal  -> S.ff a
+      | `forward ->
+        let ap =
+          Array.map
+            (fun x ->
+              match x with
+              | DF (p, _, t') -> if t = t' then p else x
+              | x             -> x)
+            a
+        in
+        let cp = f ap in
+        let at =
+          let at = a |> Array.map zero in
+          List.iter (fun k -> at.(k) <- tangent a.(k)) idxs;
+          S.df idxs cp ap at
+        in
+        DF (cp, at, t)
+      | `reverse ->
+        let ap =
+          Array.map
+            (fun x ->
+              match x with
+              | DR (p, _, _, _, t', _) -> if t = t' then p else x
+              | x                      -> x)
+            a
+        in
+        let cp = f ap in
+        let adjoint cp ca t =
+          (* use primal of inputs to calculate adjoint *)
+          let ar = S.dr idxs ap cp ca |> Array.of_list in
+          List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
+        in
+        let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
+        let label = S.label, List.(map (fun i -> a.(i)) idxs) in
+        DR (cp, ref (zero cp), (adjoint, register, label), ref 0, t, ref 0)
     in
-    fun (module S : Aiso) ->
-      let rec f a =
-        let _, t, mode, idxs = build_info a in
-        let idxs = idxs |> List.rev in
-        match mode with
-        | `normal  -> S.ff a
-        | `forward ->
-          let ap =
-            Array.map
-              (fun x ->
-                match x with
-                | DF (p, _, t') -> if t = t' then p else x
-                | x             -> x)
-              a
-          in
-          let cp = f ap in
-          let at =
-            let at = a |> Array.map zero in
-            List.iter (fun k -> at.(k) <- tangent a.(k)) idxs;
-            S.df idxs cp ap at
-          in
-          DF (cp, at, t)
-        | `reverse ->
-          let ap =
-            Array.map
-              (fun x ->
-                match x with
-                | DR (p, _, _, _, t', _) -> if t = t' then p else x
-                | x                      -> x)
-              a
-          in
-          let cp = f ap in
-          let adjoint cp ca t =
-            (* use primal of inputs to calculate adjoint *)
-            let ar = S.dr idxs ap cp ca |> Array.of_list in
-            List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
-          in
-          let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
-          let label = S.label, List.(map (fun i -> a.(i)) idxs) in
-          DR (cp, ref (zero cp), (adjoint, register, label), ref 0, t, ref 0)
-      in
-      f
+    f
+
+
+  module type Aiao = sig
+    val label : string
+
+    val ff : t array -> t array
+
+    val df : int list -> t array -> t array -> t array -> t
+
+    val dr : int list -> t array -> t ref array -> t ref array -> t list
+  end
+
+  let build_aiao (module S : Aiao) =
+    let rec f a =
+      let _, t, mode, idxs = build_info a in
+      let idxs = idxs |> List.rev in
+      match mode with
+      | `normal  -> S.ff a
+      | `forward ->
+        let ap =
+          Array.map
+            (fun x ->
+              match x with
+              | DF (p, _, t') -> if t = t' then p else x
+              | x             -> x)
+            a
+        in
+        let cp_arr = f ap in
+        Array.map
+          (fun cp ->
+            let at =
+              let at = a |> Array.map zero in
+              List.iter (fun k -> at.(k) <- tangent a.(k)) idxs;
+              S.df idxs cp_arr ap at
+            in
+            DF (cp, at, t))
+          cp_arr
+      | `reverse ->
+        let ap =
+          Array.map
+            (fun x ->
+              match x with
+              | DR (p, _, _, _, t', _) -> if t = t' then p else x
+              | x                      -> x)
+            a
+        in
+        let cp_arr = f ap in
+        let cp_arr_ref = Array.map (fun cp -> ref cp) cp_arr in
+        let tracker = ref 0 in
+        let ca_ref_arr = Array.map (fun cp -> ref (zero cp)) cp_arr in
+        Array.map2
+          (fun cp ca_ref ->
+            let adjoint _ _ t =
+              (* use primal of inputs to calculate adjoint *)
+              let ar = S.dr idxs ap cp_arr_ref ca_ref_arr |> Array.of_list in
+              List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
+            in
+            let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
+            let label = S.label, List.(map (fun i -> a.(i)) idxs) in
+            DR (cp, ca_ref, (adjoint, register, label), ref 0, t, tracker))
+          cp_arr
+          ca_ref_arr
+    in
+    f
 end
