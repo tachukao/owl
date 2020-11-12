@@ -22,13 +22,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_siso =
     (* single input single output operation *)
-    let op_siso ~ff ~fd ~df ~r a =
+    let op_siso ~ff ~f ~df ~r a =
       match a with
       | DF (ap, at, ai)      ->
-        let cp = fd ap in
+        let cp = f ap in
         DF (cp, df cp ap at, ai)
       | DR (ap, _, _, _, ai) ->
-        let cp = fd ap in
+        let cp = f ap in
         DR (cp, ref (zero cp), r a, ref 0, ai)
       | ap                   -> ff ap
     in
@@ -40,14 +40,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
-        let fd a = f a in
         let r a =
           let adjoint cp ca t = (S.dr (primal a) cp ca, a) :: t in
           let register t = a :: t in
           let label = S.label, [ a ] in
           adjoint, register, label
         in
-        op_siso ~ff ~fd ~df:S.df ~r a
+        op_siso ~ff ~f ~df:S.df ~r a
       in
       f
 
@@ -66,13 +65,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_sipo =
     (* single input pair outputs operation *)
-    let op_sipo ~ff ~fd ~df ~r a =
+    let op_sipo ~ff ~f ~df ~r a =
       match a with
       | DF (ap, at, ai)      ->
-        let cp1, cp2 = fd ap in
+        let cp1, cp2 = f ap in
         DF (cp1, df cp1 ap at, ai), DF (cp2, df cp2 ap at, ai)
       | DR (ap, _, _, _, ai) ->
-        let cp1, cp2 = fd ap in
+        let cp1, cp2 = f ap in
         let ca1_ref = ref (zero cp1) in
         let ca2_ref = ref (zero cp2) in
         let cp1_ref = ref cp1 in
@@ -93,14 +92,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
-        let fd = f in
         let r (a, cp_ref, ca_ref) =
           let adjoint cp _ca t = (S.dr (primal a) cp cp_ref ca_ref, a) :: t in
           let register t = a :: t in
           let label = S.label, [ a ] in
           adjoint, register, label
         in
-        op_sipo ~ff ~fd ~df ~r a
+        op_sipo ~ff ~f ~df ~r a
       in
       f
 
@@ -119,13 +117,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_sito =
     (* single input three outputs operation *)
-    let op_sito ~ff ~fd ~df ~r a =
+    let op_sito ~ff ~f ~df ~r a =
       match a with
       | DF (ap, at, ai)      ->
-        let cp1, cp2, cp3 = fd ap in
+        let cp1, cp2, cp3 = f ap in
         DF (cp1, df cp1 ap at, ai), DF (cp2, df cp2 ap at, ai), DF (cp3, df cp3 ap at, ai)
       | DR (ap, _, _, _, ai) ->
-        let cp1, cp2, cp3 = fd ap in
+        let cp1, cp2, cp3 = f ap in
         let ca1_ref = ref (zero cp1) in
         let ca2_ref = ref (zero cp2) in
         let ca3_ref = ref (zero cp3) in
@@ -161,14 +159,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
-        let fd = f in
         let r (a, cp_ref, ca_ref) =
           let adjoint cp _ca t = (S.dr (primal a) cp cp_ref ca_ref, a) :: t in
           let register t = a :: t in
           let label = S.label, [ a ] in
           adjoint, register, label
         in
-        op_sito ~ff ~fd ~df ~r a
+        op_sito ~ff ~f ~df ~r a
       in
       f
 
@@ -187,13 +184,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_siao =
     (* single input array outputs operation *)
-    let op_siao ~ff ~fd ~df ~r a =
+    let op_siao ~ff ~f ~df ~r a =
       match a with
       | DF (ap, at, ai)      ->
-        let cp_arr = fd ap in
+        let cp_arr = f ap in
         Array.map (fun cp -> DF (cp, df cp ap at, ai)) cp_arr
       | DR (ap, _, _, _, ai) ->
-        let cp_arr = fd ap in
+        let cp_arr = f ap in
         let cp_arr_ref = Array.map (fun cp -> ref cp) cp_arr in
         let fanout = ref 0 in
         let ca_ref_arr = Array.map (fun cp -> ref (zero cp)) cp_arr in
@@ -211,14 +208,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
-        let fd = f in
         let r (a, cp_arr_ref, ca_arr_ref) =
           let adjoint cp _ca_ref t = (S.dr (primal a) cp cp_arr_ref ca_arr_ref, a) :: t in
           let register t = a :: t in
           let label = S.label, [ a ] in
           adjoint, register, label
         in
-        op_siao ~ff ~fd ~df ~r a
+        op_siao ~ff ~f ~df ~r a
       in
       f
 
@@ -249,71 +245,71 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_piso =
     (* pair input single output operation *)
-    let op_piso ~ff ~fd ~df_da ~df_db ~df_dab ~r_d_d ~r_d_c ~r_c_d a b =
+    let op_piso ~ff ~f ~df_da ~df_db ~df_dab ~r_d_d ~r_d_c ~r_c_d a b =
       match a, b with
       | F _ap, DF (bp, bt, bi) ->
-        let cp = fd a bp in
+        let cp = f a bp in
         DF (cp, df_db cp a bp bt, bi)
       | DF (ap, at, ai), F _bp ->
-        let cp = fd ap b in
+        let cp = f ap b in
         DF (cp, df_da cp ap at b, ai)
       | Arr _ap, DF (bp, bt, bi) ->
-        let cp = fd a bp in
+        let cp = f a bp in
         DF (cp, df_db cp a bp bt, bi)
       | DF (ap, at, ai), Arr _bp ->
-        let cp = fd ap b in
+        let cp = f ap b in
         DF (cp, df_da cp ap at b, ai)
       | F _ap, DR (bp, _, _, _, bi) ->
-        let cp = fd a bp in
+        let cp = f a bp in
         DR (cp, ref (zero cp), r_c_d a b, ref 0, bi)
       | DR (ap, _, _, _, ai), F _bp ->
-        let cp = fd ap b in
+        let cp = f ap b in
         DR (cp, ref (zero cp), r_d_c a b, ref 0, ai)
       | Arr _ap, DR (bp, _, _, _, bi) ->
-        let cp = fd a bp in
+        let cp = f a bp in
         DR (cp, ref (zero cp), r_c_d a b, ref 0, bi)
       | DR (ap, _, _, _, ai), Arr _bp ->
-        let cp = fd ap b in
+        let cp = f ap b in
         DR (cp, ref (zero cp), r_d_c a b, ref 0, ai)
       | DF (ap, at, ai), DR (bp, _, _, _, bi) ->
         (match cmp_tag ai bi with
         | 1  ->
-          let cp = fd ap b in
+          let cp = f ap b in
           DF (cp, df_da cp ap at b, ai)
         | -1 ->
-          let cp = fd a bp in
+          let cp = f a bp in
           DR (cp, ref (zero cp), r_c_d a b, ref 0, bi)
         | _  -> failwith "error: forward and reverse clash at the same level")
       | DR (ap, _, _, _, ai), DF (bp, bt, bi) ->
         (match cmp_tag ai bi with
         | -1 ->
-          let cp = fd a bp in
+          let cp = f a bp in
           DF (cp, df_db cp a bp bt, bi)
         | 1  ->
-          let cp = fd ap b in
+          let cp = f ap b in
           DR (cp, ref (zero cp), r_d_c a b, ref 0, ai)
         | _  -> failwith "error: forward and reverse clash at the same level")
       | DF (ap, at, ai), DF (bp, bt, bi) ->
         (match cmp_tag ai bi with
         | 0 ->
-          let cp = fd ap bp in
+          let cp = f ap bp in
           DF (cp, df_dab cp ap at bp bt, ai)
         | 1 ->
-          let cp = fd ap b in
+          let cp = f ap b in
           DF (cp, df_da cp ap at b, ai)
         | _ ->
-          let cp = fd a bp in
+          let cp = f a bp in
           DF (cp, df_db cp a bp bt, bi))
       | DR (ap, _, _, _, ai), DR (bp, _, _, _, bi) ->
         (match cmp_tag ai bi with
         | 0 ->
-          let cp = fd ap bp in
+          let cp = f ap bp in
           DR (cp, ref (zero cp), r_d_d a b, ref 0, ai)
         | 1 ->
-          let cp = fd ap b in
+          let cp = f ap b in
           DR (cp, ref (zero cp), r_d_c a b, ref 0, ai)
         | _ ->
-          let cp = fd a bp in
+          let cp = f a bp in
           DR (cp, ref (zero cp), r_c_d a b, ref 0, bi))
       | a, b -> ff a b
     in
@@ -327,7 +323,6 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           | Arr a, Arr b -> S.ff_bb a b
           | _            -> error_binop S.label a b
         in
-        let fd = f in
         let r_d_d a b =
           let adjoint cp ca_ref t =
             let abar, bbar = S.dr_ab (primal a) (primal b) cp ca_ref in
@@ -351,7 +346,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         in
         op_piso
           ~ff
-          ~fd
+          ~f
           ~df_da:S.df_da
           ~df_db:S.df_db
           ~df_dab:S.df_dab
