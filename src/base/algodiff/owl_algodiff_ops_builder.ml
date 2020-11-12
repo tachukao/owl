@@ -473,9 +473,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
     val ff : t array -> t array
 
-    val df : int list -> t array -> t array -> t array -> t
+    val df : int list -> t array -> t array -> t array -> t array
 
-    val dr : int -> int list -> t array -> t ref array -> t ref array -> t list
+    val dr : int list -> t array -> t ref array -> t ref array -> t list
   end
 
   let build_aiao (module S : Aiao) =
@@ -494,15 +494,12 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             a
         in
         let cp_arr = f ap in
-        Array.map
-          (fun cp ->
-            let at =
-              let at = a |> Array.map zero in
-              List.iter (fun k -> at.(k) <- tangent a.(k)) idxs;
-              S.df idxs cp_arr ap at
-            in
-            DF (cp, at, t))
-          cp_arr
+        let at_arr =
+          let at = a |> Array.map zero in
+          List.iter (fun k -> at.(k) <- tangent a.(k)) idxs;
+          S.df idxs cp_arr ap at
+        in
+        Array.map2 (fun cp at -> DF (cp, at, t)) cp_arr at_arr
       | `reverse ->
         let ap =
           Array.map
@@ -516,18 +513,18 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         let cp_arr_ref = Array.map (fun cp -> ref cp) cp_arr in
         let tracker = ref 0 in
         let ca_ref_arr = Array.map (fun cp -> ref (zero cp)) cp_arr in
-        Array.mapi
-          (fun k cp ->
-            let ca_ref = ca_ref_arr.(k) in
+        Array.map2
+          (fun cp ca_ref ->
             let adjoint _ _ t =
               (* use primal of inputs to calculate adjoint *)
-              let ar = S.dr k idxs ap cp_arr_ref ca_ref_arr |> Array.of_list in
+              let ar = S.dr idxs ap cp_arr_ref ca_ref_arr |> Array.of_list in
               List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
             in
             let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
             let label = S.label, List.(map (fun i -> a.(i)) idxs) in
             DR (cp, ca_ref, (adjoint, register, label), ref 0, t, tracker))
           cp_arr
+          ca_ref_arr
     in
     f
 end
