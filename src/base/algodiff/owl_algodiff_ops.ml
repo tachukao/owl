@@ -1908,13 +1908,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
 
              let dr_ab a _b cp ca =
-               let abar, qbar = _lyapunov_backward_aq a !ca cp in
+               let cbar =
+                 let cbar = !ca in
+                 pack_flt 0.5 * (cbar + transpose cbar)
+               in
+               let abar, qbar = _lyapunov_backward_aq a cbar cp in
                abar, qbar
 
 
-             let dr_a a _q cp ca = _lyapunov_backward_a a !ca cp
+             let dr_a a _q cp ca =
+               let cbar =
+                 let cbar = !ca in
+                 pack_flt 0.5 * (cbar + transpose cbar)
+               in
+               _lyapunov_backward_a a cbar cp
 
-             let dr_b a _q _cp ca = _lyapunov_backward_q a !ca
+
+             let dr_b a _q _cp ca =
+               let cbar =
+                 let cbar = !ca in
+                 pack_flt 0.5 * (cbar + transpose cbar)
+               in
+               _lyapunov_backward_q a cbar
            end : Piso))
 
 
@@ -1957,13 +1972,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
 
               let dr_ab a _b cp ca =
-                let abar, qbar = _discrete_lyapunov_backward_aq a !ca cp in
+                let cbar =
+                  let cbar = !ca in
+                  pack_flt 0.5 * (cbar + transpose cbar)
+                in
+                let abar, qbar = _discrete_lyapunov_backward_aq a cbar cp in
                 abar, qbar
 
 
-              let dr_a a _q cp ca = _discrete_lyapunov_backward_a a !ca cp
+              let dr_a a _q cp ca =
+                let cbar =
+                  let cbar = !ca in
+                  pack_flt 0.5 * (cbar + transpose cbar)
+                in
+                _discrete_lyapunov_backward_a a cbar cp
 
-              let dr_b a _q _cp ca = _discrete_lyapunov_backward_q a !ca
+
+              let dr_b a _q _cp ca =
+                let cbar =
+                  let cbar = !ca in
+                  pack_flt 0.5 * (cbar + transpose cbar)
+                in
+                _discrete_lyapunov_backward_q a cbar
             end : Piso))
 
 
@@ -2101,7 +2131,10 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
 
                let dr idxs inp p pbar_ref =
-                 let pbar = !pbar_ref in
+                 let pbar =
+                   let pbar = !pbar_ref in
+                   pack_flt 0.5 * (pbar + transpose pbar)
+                 in
                  let bars =
                    let a, b, q, r = unpack inp in
                    care_backward ~diag_r a b q r p pbar
