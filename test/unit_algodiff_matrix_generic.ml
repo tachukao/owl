@@ -1,7 +1,5 @@
-(** Unit test for Algodiff module *)
-let () = Printexc.record_backtrace true
-
 open Owl_types
+(** Unit test for Algodiff module *)
 
 (* functor to generate test unit. *)
 
@@ -375,7 +373,7 @@ module Make (M : Ndarray_Algodiff with type elt = float) = struct
             (module struct
               let label = "care_aiso_test"
 
-              let ff a =
+              let op a =
                 match unpack a with
                 | Arr a, Arr b, Arr q, Arr r ->
                   let z = Owl.Linalg.D.care ~diag_r a b q r in

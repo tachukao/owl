@@ -58,9 +58,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "neg"
 
-             let ff_flt a = F A.Scalar.(neg a)
+             let op_s a = F A.Scalar.(neg a)
 
-             let ff_arr a = Arr A.(neg a)
+             let op_a a = Arr A.(neg a)
 
              let df _cp _ap at = neg at
 
@@ -76,9 +76,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "abs"
 
-             let ff_flt a = F A.Scalar.(abs a)
+             let op_s a = F A.Scalar.(abs a)
 
-             let ff_arr a = Arr A.(abs a)
+             let op_a a = Arr A.(abs a)
 
              let df _cp ap at = at * signum ap
 
@@ -94,9 +94,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "signum"
 
-             let ff_flt a = F A.Scalar.(signum a)
+             let op_s a = F A.Scalar.(signum a)
 
-             let ff_arr a = Arr A.(signum a)
+             let op_a a = Arr A.(signum a)
 
              let df _cp ap _at = zero ap
 
@@ -112,9 +112,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "floor"
 
-             let ff_flt a = F A.Scalar.(floor a)
+             let op_s a = F A.Scalar.(floor a)
 
-             let ff_arr a = Arr A.(floor a)
+             let op_a a = Arr A.(floor a)
 
              let df _cp ap _at = zero ap
 
@@ -130,9 +130,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "ceil"
 
-             let ff_flt a = F A.Scalar.(ceil a)
+             let op_s a = F A.Scalar.(ceil a)
 
-             let ff_arr a = Arr A.(ceil a)
+             let op_a a = Arr A.(ceil a)
 
              let df _cp ap _at = zero ap
 
@@ -148,9 +148,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "round"
 
-             let ff_flt a = F A.Scalar.(round a)
+             let op_s a = F A.Scalar.(round a)
 
-             let ff_arr a = Arr A.(round a)
+             let op_a a = Arr A.(round a)
 
              let df _cp ap _at = zero ap
 
@@ -166,9 +166,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sqr"
 
-             let ff_flt a = F A.Scalar.(sqr a)
+             let op_s a = F A.Scalar.(sqr a)
 
-             let ff_arr a = Arr A.(sqr a)
+             let op_a a = Arr A.(sqr a)
 
              let df _cp ap at = pack_flt 2. * at * ap
 
@@ -184,9 +184,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sqrt"
 
-             let ff_flt a = F A.Scalar.(sqrt a)
+             let op_s a = F A.Scalar.(sqrt a)
 
-             let ff_arr a = Arr A.(sqrt a)
+             let op_a a = Arr A.(sqrt a)
 
              let df cp _ap at = at / (pack_flt 2. * cp)
 
@@ -202,9 +202,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "log"
 
-             let ff_flt a = F A.Scalar.(log a)
+             let op_s a = F A.Scalar.(log a)
 
-             let ff_arr a = Arr A.(log a)
+             let op_a a = Arr A.(log a)
 
              let df _cp ap at = at / ap
 
@@ -220,9 +220,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "log2"
 
-             let ff_flt a = F A.Scalar.(log2 a)
+             let op_s a = F A.Scalar.(log2 a)
 
-             let ff_arr a = Arr A.(log2 a)
+             let op_a a = Arr A.(log2 a)
 
              let df _cp ap at = at / (ap * pack_flt Owl_const.log2e)
 
@@ -238,9 +238,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "log10"
 
-             let ff_flt a = F A.Scalar.(log10 a)
+             let op_s a = F A.Scalar.(log10 a)
 
-             let ff_arr a = Arr A.(log10 a)
+             let op_a a = Arr A.(log10 a)
 
              let df _cp ap at = at / (ap * pack_flt Owl_const.log10e)
 
@@ -256,9 +256,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "exp"
 
-             let ff_flt a = F A.Scalar.(exp a)
+             let op_s a = F A.Scalar.(exp a)
 
-             let ff_arr a = Arr A.(exp a)
+             let op_a a = Arr A.(exp a)
 
              let df cp _ap at = at * cp
 
@@ -274,9 +274,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sin"
 
-             let ff_flt a = F A.Scalar.(sin a)
+             let op_s a = F A.Scalar.(sin a)
 
-             let ff_arr a = Arr A.(sin a)
+             let op_a a = Arr A.(sin a)
 
              let df _cp ap at = at * cos ap
 
@@ -292,9 +292,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "cos"
 
-             let ff_flt a = F A.Scalar.(cos a)
+             let op_s a = F A.Scalar.(cos a)
 
-             let ff_arr a = Arr A.(cos a)
+             let op_a a = Arr A.(cos a)
 
              let df _cp ap at = neg (at * sin ap)
 
@@ -310,9 +310,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "tan"
 
-             let ff_flt a = F A.Scalar.(tan a)
+             let op_s a = F A.Scalar.(tan a)
 
-             let ff_arr a = Arr A.(tan a)
+             let op_a a = Arr A.(tan a)
 
              let df _cp ap at = at / sqr (cos ap)
 
@@ -328,9 +328,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sinh"
 
-             let ff_flt a = F A.Scalar.(sinh a)
+             let op_s a = F A.Scalar.(sinh a)
 
-             let ff_arr a = Arr A.(sinh a)
+             let op_a a = Arr A.(sinh a)
 
              let df _cp ap at = at * cosh ap
 
@@ -346,9 +346,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "cosh"
 
-             let ff_flt a = F A.Scalar.(cosh a)
+             let op_s a = F A.Scalar.(cosh a)
 
-             let ff_arr a = Arr A.(cosh a)
+             let op_a a = Arr A.(cosh a)
 
              let df _cp ap at = at * sinh ap
 
@@ -364,9 +364,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "tanh"
 
-             let ff_flt a = F A.Scalar.(tanh a)
+             let op_s a = F A.Scalar.(tanh a)
 
-             let ff_arr a = Arr A.(tanh a)
+             let op_a a = Arr A.(tanh a)
 
              let df _cp ap at = at / sqr (cosh ap)
 
@@ -382,9 +382,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "asin"
 
-             let ff_flt a = F A.Scalar.(asin a)
+             let op_s a = F A.Scalar.(asin a)
 
-             let ff_arr a = Arr A.(asin a)
+             let op_a a = Arr A.(asin a)
 
              let df _cp ap at = at / sqrt (pack_flt 1. - sqr ap)
 
@@ -400,9 +400,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "acos"
 
-             let ff_flt a = F A.Scalar.(acos a)
+             let op_s a = F A.Scalar.(acos a)
 
-             let ff_arr a = Arr A.(acos a)
+             let op_a a = Arr A.(acos a)
 
              let df _cp ap at = neg at / sqrt (pack_flt 1. - sqr ap)
 
@@ -418,9 +418,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "atan"
 
-             let ff_flt a = F A.Scalar.(atan a)
+             let op_s a = F A.Scalar.(atan a)
 
-             let ff_arr a = Arr A.(atan a)
+             let op_a a = Arr A.(atan a)
 
              let df _cp ap at = at / (pack_flt 1. + sqr ap)
 
@@ -436,9 +436,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "asinh"
 
-             let ff_flt a = F A.Scalar.(asinh a)
+             let op_s a = F A.Scalar.(asinh a)
 
-             let ff_arr a = Arr A.(asinh a)
+             let op_a a = Arr A.(asinh a)
 
              let df _cp ap at = at / sqrt (sqr ap + pack_flt 1.)
 
@@ -454,9 +454,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "acosh"
 
-             let ff_flt a = F A.Scalar.(acosh a)
+             let op_s a = F A.Scalar.(acosh a)
 
-             let ff_arr a = Arr A.(acosh a)
+             let op_a a = Arr A.(acosh a)
 
              let df _cp ap at = at / sqrt (sqr ap - pack_flt 1.)
 
@@ -472,9 +472,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "atanh"
 
-             let ff_flt a = F A.Scalar.(atanh a)
+             let op_s a = F A.Scalar.(atanh a)
 
-             let ff_arr a = Arr A.(atanh a)
+             let op_a a = Arr A.(atanh a)
 
              let df _cp ap at = at / (pack_flt 1. - sqr ap)
 
@@ -491,9 +491,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "get_slice"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(get_slice i a)
+              let op_a a = Arr A.(get_slice i a)
 
               let df _cp _ap at = get_slice i at
 
@@ -509,9 +509,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sum'"
 
-             let ff_flt a = F a
+             let op_s a = F a
 
-             let ff_arr a = F A.(sum' a)
+             let op_a a = F A.(sum' a)
 
              let df _cp _ap at = sum' at
 
@@ -528,9 +528,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "sum axis"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(sum ?axis ~keep_dims a)
+              let op_a a = Arr A.(sum ?axis ~keep_dims a)
 
               let df _cp _ap at = sum ?axis ~keep_dims at
 
@@ -560,9 +560,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "sum_reduce"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(sum_reduce ~axis a)
+              let op_a a = Arr A.(sum_reduce ~axis a)
 
               let df _cp _ap at = sum_reduce ~axis at
 
@@ -582,9 +582,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "log_sum_exp'"
 
-             let ff_flt _ = raise Owl_exception.(NOT_IMPLEMENTED "log_sum_exp'")
+             let op_s _ = raise Owl_exception.(NOT_IMPLEMENTED "log_sum_exp'")
 
-             let ff_arr x = pack_elt (A.log_sum_exp' x)
+             let op_a x = pack_elt (A.log_sum_exp' x)
 
              let df cp ap at = sum' (at * exp (ap - cp))
 
@@ -609,9 +609,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "log_sum_exp"
 
-              let ff_flt _ = raise Owl_exception.(NOT_IMPLEMENTED "log_sum_exp")
+              let op_s _ = raise Owl_exception.(NOT_IMPLEMENTED "log_sum_exp")
 
-              let ff_arr x = pack_arr (A.log_sum_exp ~axis ~keep_dims x)
+              let op_a x = pack_arr (A.log_sum_exp ~axis ~keep_dims x)
 
               let df cp ap at =
                 print_dim cp;
@@ -647,9 +647,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "transpose"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(transpose ?axis a)
+              let op_a a = Arr A.(transpose ?axis a)
 
               let df _cp _ap at = transpose ?axis at
 
@@ -674,9 +674,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "l1norm'"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = F A.(l1norm' a)
+             let op_a a = F A.(l1norm' a)
 
              let df _cp ap at = sum' (at * signum ap)
 
@@ -692,9 +692,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "l2norm'"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = F A.(l2norm' a)
+             let op_a a = F A.(l2norm' a)
 
              let df cp ap at = sum' (ap * at) / cp
 
@@ -710,9 +710,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "l2norm_sqr'"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = F A.(l2norm_sqr' a)
+             let op_a a = F A.(l2norm_sqr' a)
 
              let df _cp ap at = pack_flt 2. * sum' (ap * at)
 
@@ -728,9 +728,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sigmoid"
 
-             let ff_flt a = F A.Scalar.(sigmoid a)
+             let op_s a = F A.Scalar.(sigmoid a)
 
-             let ff_arr a = Arr A.(sigmoid a)
+             let op_a a = Arr A.(sigmoid a)
 
              let df cp _ap at = at * cp * (pack_flt 1. - cp)
 
@@ -746,9 +746,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "relu"
 
-             let ff_flt a = F A.Scalar.(relu a)
+             let op_s a = F A.Scalar.(relu a)
 
-             let ff_arr a = Arr A.(relu a)
+             let op_a a = Arr A.(relu a)
 
              let df _cp ap at = at * (pack_flt 1. + signum ap) / pack_flt 2.
 
@@ -764,9 +764,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "dawsn"
 
-             let ff_flt a = F A.Scalar.(dawsn a)
+             let op_s a = F A.Scalar.(dawsn a)
 
-             let ff_arr a = Arr A.(dawsn a)
+             let op_a a = Arr A.(dawsn a)
 
              let df cp ap at = at * (pack_flt 1. - (pack_flt 2. * ap * cp))
 
@@ -783,9 +783,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "diag"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(diag ~k a |> copy)
+              let op_a a = Arr A.(diag ~k a |> copy)
 
               let df _cp _ap at = diag ~k at
 
@@ -802,9 +802,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "diagm"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(Mat.diagm ~k a |> copy)
+              let op_a a = Arr A.(Mat.diagm ~k a |> copy)
 
               let df _cp _ap at = diagm ~k at
 
@@ -820,9 +820,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "trace"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = F A.(trace a)
+             let op_a a = F A.(trace a)
 
              let df _cp _ap at = trace at
 
@@ -841,9 +841,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "triu"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(Mat.triu ~k a)
+              let op_a a = Arr A.(Mat.triu ~k a)
 
               let df _cp _ap at = triu ~k at
 
@@ -860,9 +860,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "tril"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(Mat.tril ~k a)
+              let op_a a = Arr A.(Mat.tril ~k a)
 
               let df _cp _ap at = tril ~k at
 
@@ -878,9 +878,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "inv"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = Arr A.(Linalg.inv a)
+             let op_a a = Arr A.(Linalg.inv a)
 
              let df cp _ap at = neg cp *@ at *@ cp
 
@@ -910,9 +910,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "reshape"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(reshape a s)
+              let op_a a = Arr A.(reshape a s)
 
               let df _cp _ap at = reshape at s
 
@@ -946,9 +946,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "get_row"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(row a i |> copy)
+              let op_a a = Arr A.(row a i |> copy)
 
               let df _cp _ap at = get_row at i
 
@@ -968,27 +968,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "add"
 
-             let ff_flt_flt a b = F A.Scalar.(add a b)
+             let op_ss a b = F A.Scalar.(add a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_add a b)
+             let op_sa a b = Arr A.(scalar_add a b)
 
-             let ff_arr_flt a b = Arr A.(add_scalar a b)
+             let op_as a b = Arr A.(add_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(add a b)
+             let op_aa a b = Arr A.(add a b)
 
-             let df_a _cp _ap at _bp = at
+             let df_1 _cp _ap at _bp = at
 
-             let df_b _cp _ap _bp bt = bt
+             let df_2 _cp _ap _bp bt = bt
 
-             let df_ab _cp _ap at _bp bt = at + bt
+             let df_12 _cp _ap at _bp bt = at + bt
 
-             let dr_ab a b _cp ca =
+             let dr_12 a b _cp ca =
                _squeeze_broadcast !ca (shape a), _squeeze_broadcast !ca (shape b)
 
 
-             let dr_a a _b _cp ca = _squeeze_broadcast !ca (shape a)
+             let dr_1 a _b _cp ca = _squeeze_broadcast !ca (shape a)
 
-             let dr_b _a b _cp ca = _squeeze_broadcast !ca (shape b)
+             let dr_2 _a b _cp ca = _squeeze_broadcast !ca (shape b)
            end : Piso))
 
 
@@ -1002,27 +1002,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sub"
 
-             let ff_flt_flt a b = F A.Scalar.(sub a b)
+             let op_ss a b = F A.Scalar.(sub a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_sub a b)
+             let op_sa a b = Arr A.(scalar_sub a b)
 
-             let ff_arr_flt a b = Arr A.(sub_scalar a b)
+             let op_as a b = Arr A.(sub_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(sub a b)
+             let op_aa a b = Arr A.(sub a b)
 
-             let df_a _cp _ap at _bp = at
+             let df_1 _cp _ap at _bp = at
 
-             let df_b _cp _ap _bp bt = neg bt
+             let df_2 _cp _ap _bp bt = neg bt
 
-             let df_ab _cp _ap at _bp bt = at - bt
+             let df_12 _cp _ap at _bp bt = at - bt
 
-             let dr_ab a b _cp ca =
+             let dr_12 a b _cp ca =
                _squeeze_broadcast !ca (shape a), neg (_squeeze_broadcast !ca (shape b))
 
 
-             let dr_a a _b _cp ca = _squeeze_broadcast !ca (shape a)
+             let dr_1 a _b _cp ca = _squeeze_broadcast !ca (shape a)
 
-             let dr_b _a b _cp ca = neg (_squeeze_broadcast !ca (shape b))
+             let dr_2 _a b _cp ca = neg (_squeeze_broadcast !ca (shape b))
            end : Piso))
 
 
@@ -1036,28 +1036,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "mul"
 
-             let ff_flt_flt a b = F A.Scalar.(mul a b)
+             let op_ss a b = F A.Scalar.(mul a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_mul a b)
+             let op_sa a b = Arr A.(scalar_mul a b)
 
-             let ff_arr_flt a b = Arr A.(mul_scalar a b)
+             let op_as a b = Arr A.(mul_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(mul a b)
+             let op_aa a b = Arr A.(mul a b)
 
-             let df_a _cp _ap at bp = at * bp
+             let df_1 _cp _ap at bp = at * bp
 
-             let df_b _cp ap _bp bt = ap * bt
+             let df_2 _cp ap _bp bt = ap * bt
 
-             let df_ab _cp ap at bp bt = (ap * bt) + (at * bp)
+             let df_12 _cp ap at bp bt = (ap * bt) + (at * bp)
 
-             let dr_ab a b _cp ca =
+             let dr_12 a b _cp ca =
                ( _squeeze_broadcast (!ca * b) (shape a)
                , _squeeze_broadcast (!ca * a) (shape b) )
 
 
-             let dr_a a b _cp ca = _squeeze_broadcast (!ca * b) (shape a)
+             let dr_1 a b _cp ca = _squeeze_broadcast (!ca * b) (shape a)
 
-             let dr_b a b _cp ca = _squeeze_broadcast (!ca * a) (shape b)
+             let dr_2 a b _cp ca = _squeeze_broadcast (!ca * a) (shape b)
            end : Piso))
 
 
@@ -1071,28 +1071,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "div"
 
-             let ff_flt_flt a b = F A.Scalar.(div a b)
+             let op_ss a b = F A.Scalar.(div a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_div a b)
+             let op_sa a b = Arr A.(scalar_div a b)
 
-             let ff_arr_flt a b = Arr A.(div_scalar a b)
+             let op_as a b = Arr A.(div_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(div a b)
+             let op_aa a b = Arr A.(div a b)
 
-             let df_a _cp _ap at bp = at / bp
+             let df_1 _cp _ap at bp = at / bp
 
-             let df_b cp _ap bp bt = neg bt * cp / bp
+             let df_2 cp _ap bp bt = neg bt * cp / bp
 
-             let df_ab cp _ap at bp bt = (at - (bt * cp)) / bp
+             let df_12 cp _ap at bp bt = (at - (bt * cp)) / bp
 
-             let dr_ab a b _cp ca =
+             let dr_12 a b _cp ca =
                ( _squeeze_broadcast (!ca / b) (shape a)
                , _squeeze_broadcast (!ca * (neg a / (b * b))) (shape b) )
 
 
-             let dr_a a b _cp ca = _squeeze_broadcast (!ca / b) (shape a)
+             let dr_1 a b _cp ca = _squeeze_broadcast (!ca / b) (shape a)
 
-             let dr_b a b _cp ca = _squeeze_broadcast (!ca * (neg a / (b * b))) (shape b)
+             let dr_2 a b _cp ca = _squeeze_broadcast (!ca * (neg a / (b * b))) (shape b)
            end : Piso))
 
 
@@ -1123,32 +1123,32 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "pow"
 
-             let ff_flt_flt a b = F A.Scalar.(pow a b)
+             let op_ss a b = F A.Scalar.(pow a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_pow a b)
+             let op_sa a b = Arr A.(scalar_pow a b)
 
-             let ff_arr_flt a b = Arr A.(pow_scalar a b)
+             let op_as a b = Arr A.(pow_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(pow a b)
+             let op_aa a b = Arr A.(pow a b)
 
-             let df_a _cp ap at bp = at * (ap ** (bp - pack_flt 1.)) * bp
+             let df_1 _cp ap at bp = at * (ap ** (bp - pack_flt 1.)) * bp
 
-             let df_b cp ap _bp bt = bt * cp * log ap
+             let df_2 cp ap _bp bt = bt * cp * log ap
 
-             let df_ab cp ap at bp bt =
+             let df_12 cp ap at bp bt =
                ((ap ** (bp - pack_flt 1.)) * (at * bp)) + (cp * bt * log ap)
 
 
-             let dr_ab a b cp ca =
+             let dr_12 a b cp ca =
                ( _squeeze_broadcast (!ca * (a ** (b - pack_flt 1.)) * b) (shape a)
                , _squeeze_broadcast (!ca * cp * log a) (shape b) )
 
 
-             let dr_a a b _cp ca =
+             let dr_1 a b _cp ca =
                _squeeze_broadcast (!ca * (a ** (b - pack_flt 1.)) * b) (shape a)
 
 
-             let dr_b a b cp ca = _squeeze_broadcast (!ca * cp * log a) (shape b)
+             let dr_2 a b cp ca = _squeeze_broadcast (!ca * cp * log a) (shape b)
            end : Piso))
 
 
@@ -1160,31 +1160,31 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "atan2"
 
-             let ff_flt_flt a b = F A.Scalar.(atan2 a b)
+             let op_ss a b = F A.Scalar.(atan2 a b)
 
-             let ff_flt_arr a b = Arr A.(scalar_atan2 a b)
+             let op_sa a b = Arr A.(scalar_atan2 a b)
 
-             let ff_arr_flt a b = Arr A.(atan2_scalar a b)
+             let op_as a b = Arr A.(atan2_scalar a b)
 
-             let ff_arr_arr a b = Arr A.(atan2 a b)
+             let op_aa a b = Arr A.(atan2 a b)
 
-             let df_a _cp ap at bp = at * bp / (sqr ap + sqr bp)
+             let df_1 _cp ap at bp = at * bp / (sqr ap + sqr bp)
 
-             let df_b _cp ap bp bt = neg bt * ap / (sqr ap + sqr bp)
+             let df_2 _cp ap bp bt = neg bt * ap / (sqr ap + sqr bp)
 
-             let df_ab _cp ap at bp bt = ((at * bp) - (bt * ap)) / (sqr ap + sqr bp)
+             let df_12 _cp ap at bp bt = ((at * bp) - (bt * ap)) / (sqr ap + sqr bp)
 
-             let dr_ab a b _cp ca =
+             let dr_12 a b _cp ca =
                let d = sqr a + sqr b in
                !ca * b / d, !ca * neg a / d
 
 
-             let dr_a a b _cp ca =
+             let dr_1 a b _cp ca =
                let d = sqr a + sqr b in
                !ca * b / d
 
 
-             let dr_b a b _cp ca =
+             let dr_2 a b _cp ca =
                let d = sqr a + sqr b in
                !ca * neg a / d
            end : Piso))
@@ -1203,29 +1203,29 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "set_item"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt a b =
+              let op_as a b =
                 let aa = A.copy a in
                 A.set aa [| i; j |] b;
                 Arr aa
 
 
-              let ff_arr_arr a _b = error_uniop label (pack_arr a)
+              let op_aa a _b = error_uniop label (pack_arr a)
 
-              let df_a _cp _ap at _bp = set_item at i j (pack_flt 0.)
+              let df_1 _cp _ap at _bp = set_item at i j (pack_flt 0.)
 
-              let df_b _cp _ap _bp bt = add_item (zero a) i j bt
+              let df_2 _cp _ap _bp bt = add_item (zero a) i j bt
 
-              let df_ab _cp _ap at _bp bt = set_item at i j bt
+              let df_12 _cp _ap at _bp bt = set_item at i j bt
 
-              let dr_ab _a _b _cp ca = set_item !ca i j (pack_flt 0.), get_item !ca i j
+              let dr_12 _a _b _cp ca = set_item !ca i j (pack_flt 0.), get_item !ca i j
 
-              let dr_a _a _b _cp ca = set_item !ca i j (pack_flt 0.)
+              let dr_1 _a _b _cp ca = set_item !ca i j (pack_flt 0.)
 
-              let dr_b _a _b _cp ca = get_item !ca i j
+              let dr_2 _a _b _cp ca = get_item !ca i j
             end : Piso)
             a
             b)
@@ -1240,29 +1240,29 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "add_item"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt a b =
+              let op_as a b =
                 let aa = A.copy a in
                 A.set aa [| i; j |] A.Scalar.(add (A.get aa [| i; j |]) b);
                 Arr aa
 
 
-              let ff_arr_arr a _b = error_uniop label (pack_arr a)
+              let op_aa a _b = error_uniop label (pack_arr a)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp ap _bp bt = add_item (zero ap) i j bt
+              let df_2 _cp ap _bp bt = add_item (zero ap) i j bt
 
-              let df_ab _cp _ap at _bp bt = add_item at i j bt
+              let df_12 _cp _ap at _bp bt = add_item at i j bt
 
-              let dr_ab _a _b _cp ca = !ca, get_item !ca i j
+              let dr_12 _a _b _cp ca = !ca, get_item !ca i j
 
-              let dr_a _a _b _cp ca = !ca
+              let dr_1 _a _b _cp ca = !ca
 
-              let dr_b _a _b _cp ca = get_item !ca i j
+              let dr_2 _a _b _cp ca = get_item !ca i j
             end : Piso)
             a
             b)
@@ -1277,29 +1277,29 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "set_slice"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b =
+              let op_aa a b =
                 let a = A.copy a in
                 A.(set_slice i a b);
                 Arr a
 
 
-              let df_a _cp _ap at bp = set_slice i at (zero bp)
+              let df_1 _cp _ap at bp = set_slice i at (zero bp)
 
-              let df_b _cp ap _bp bt = set_slice i (zero ap) bt
+              let df_2 _cp ap _bp bt = set_slice i (zero ap) bt
 
-              let df_ab _cp _ap at _bp bt = set_slice i at bt
+              let df_12 _cp _ap at _bp bt = set_slice i at bt
 
-              let dr_ab _a b _cp ca = set_slice i !ca (zero b), get_slice i !ca
+              let dr_12 _a b _cp ca = set_slice i !ca (zero b), get_slice i !ca
 
-              let dr_a _a b _cp ca = set_slice i !ca (zero b)
+              let dr_1 _a b _cp ca = set_slice i !ca (zero b)
 
-              let dr_b _a _b _cp ca = get_slice i !ca
+              let dr_2 _a _b _cp ca = get_slice i !ca
             end : Piso))
 
 
@@ -1313,25 +1313,25 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "dot"
 
-             let ff_flt_flt a _b = error_uniop label (pack_elt a)
+             let op_ss a _b = error_uniop label (pack_elt a)
 
-             let ff_flt_arr a _b = error_uniop label (pack_elt a)
+             let op_sa a _b = error_uniop label (pack_elt a)
 
-             let ff_arr_flt _a b = error_uniop label (pack_elt b)
+             let op_as _a b = error_uniop label (pack_elt b)
 
-             let ff_arr_arr a b = Arr A.(dot a b)
+             let op_aa a b = Arr A.(dot a b)
 
-             let df_a _cp _ap at bp = at *@ bp
+             let df_1 _cp _ap at bp = at *@ bp
 
-             let df_b _cp ap _bp bt = ap *@ bt
+             let df_2 _cp ap _bp bt = ap *@ bt
 
-             let df_ab _cp ap at bp bt = (ap *@ bt) + (at *@ bp)
+             let df_12 _cp ap at bp bt = (ap *@ bt) + (at *@ bp)
 
-             let dr_ab a b _cp ca = dot !ca (transpose b), dot (transpose a) !ca
+             let dr_12 a b _cp ca = dot !ca (transpose b), dot (transpose a) !ca
 
-             let dr_a _a b _cp ca = dot !ca (transpose b)
+             let dr_1 _a b _cp ca = dot !ca (transpose b)
 
-             let dr_b a _b _cp ca = dot (transpose a) !ca
+             let dr_2 a _b _cp ca = dot (transpose a) !ca
            end : Piso))
 
 
@@ -1346,29 +1346,29 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "add_row"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b =
+              let op_aa a b =
                 A.(
                   copy_row_to (add (row a i) b) a i;
                   Arr a)
 
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp ap _bp bt = add_row (zero ap) bt i
+              let df_2 _cp ap _bp bt = add_row (zero ap) bt i
 
-              let df_ab _cp _ap at _bp bt = add_row at bt i
+              let df_12 _cp _ap at _bp bt = add_row at bt i
 
-              let dr_ab _a _b _cp ca = !ca, get_row !ca i
+              let dr_12 _a _b _cp ca = !ca, get_row !ca i
 
-              let dr_a _a _b _cp ca = !ca
+              let dr_1 _a _b _cp ca = !ca
 
-              let dr_b _a _b _cp ca = get_row !ca i
+              let dr_2 _a _b _cp ca = get_row !ca i
             end : Piso)
             a
             b)
@@ -1382,21 +1382,21 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "concat"
 
-             let ff_flt_flt a _b = error_uniop label (pack_elt a)
+             let op_ss a _b = error_uniop label (pack_elt a)
 
-             let ff_flt_arr a _b = error_uniop label (pack_elt a)
+             let op_sa a _b = error_uniop label (pack_elt a)
 
-             let ff_arr_flt _a b = error_uniop label (pack_elt b)
+             let op_as _a b = error_uniop label (pack_elt b)
 
-             let ff_arr_arr a b = Arr A.(concatenate ~axis [| a; b |])
+             let op_aa a b = Arr A.(concatenate ~axis [| a; b |])
 
-             let df_a _cp _ap at bp = concat ~axis at (zero bp)
+             let df_1 _cp _ap at bp = concat ~axis at (zero bp)
 
-             let df_b _cp ap _bp bt = concat ~axis (zero ap) bt
+             let df_2 _cp ap _bp bt = concat ~axis (zero ap) bt
 
-             let df_ab _cp _ap at _bp bt = concat ~axis at bt
+             let df_12 _cp _ap at _bp bt = concat ~axis at bt
 
-             let dr_ab a _b _cp ca =
+             let dr_12 a _b _cp ca =
                let sa = shape a in
                let l = sa.(axis) in
                let dim = Array.length sa in
@@ -1408,7 +1408,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                    !ca )
 
 
-             let dr_a a _b _cp ca =
+             let dr_1 a _b _cp ca =
                let sa = shape a in
                let l = sa.(axis) in
                let dim = Array.length sa in
@@ -1417,7 +1417,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                  !ca
 
 
-             let dr_b a _b _cp ca =
+             let dr_2 a _b _cp ca =
                let sa = shape a in
                let l = sa.(axis) in
                let dim = Array.length sa in
@@ -1569,9 +1569,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "split"
 
-              let ff_flt a = error_uniop "label" (pack_elt a)
+              let op_s a = error_uniop "label" (pack_elt a)
 
-              let ff_arr a = A.(split ~axis parts a) |> Array.map (fun x -> Arr x)
+              let op_a a = A.(split ~axis parts a) |> Array.map (fun x -> Arr x)
 
               let df _cp _ap _at =
                 raise (Owl_exception.NOT_IMPLEMENTED "owl_algodiff_ops.split")
@@ -1591,7 +1591,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "Concatenate_D"
 
-              let ff a = Array.map unpack_arr a |> A.concatenate ~axis |> pack_arr
+              let op a = Array.map unpack_arr a |> A.concatenate ~axis |> pack_arr
 
               let df _ _ _ tangents = concatenate ~axis tangents
 
@@ -1610,7 +1610,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "Stack_D"
 
-              let ff a = Array.map unpack_arr a |> A.stack ~axis |> pack_arr
+              let op a = Array.map unpack_arr a |> A.stack ~axis |> pack_arr
 
               let df _ _ _ tangents = stack ~axis tangents
 
@@ -1643,9 +1643,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "logdet"
 
-             let ff_flt a = error_uniop label (pack_elt a)
+             let op_s a = error_uniop label (pack_elt a)
 
-             let ff_arr a = F A.(Linalg.logdet a)
+             let op_a a = F A.(Linalg.logdet a)
 
              let df _cp ap at = trace (transpose (inv ap) *@ at)
 
@@ -1690,9 +1690,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "chol"
 
-              let ff_flt a = error_uniop "chol" (pack_elt a)
+              let op_s a = error_uniop "chol" (pack_elt a)
 
-              let ff_arr a = Arr A.(Linalg.chol ~upper a)
+              let op_a a = Arr A.(Linalg.chol ~upper a)
 
               let df cp _ap at = _chol_forward cp at upper
 
@@ -1717,9 +1717,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "qr"
 
-             let ff_flt a = error_uniop "qr" (pack_elt a)
+             let op_s a = error_uniop "qr" (pack_elt a)
 
-             let ff_arr a =
+             let op_a a =
                let q, r = A.(Linalg.qr a) in
                Arr q, Arr r
 
@@ -1748,9 +1748,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "lq"
 
-             let ff_flt a = error_uniop "lq" (pack_elt a)
+             let op_s a = error_uniop "lq" (pack_elt a)
 
-             let ff_arr a =
+             let op_a a =
                let l, q = A.(Linalg.lq a) in
                Arr l, Arr q
 
@@ -1810,9 +1810,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "svd"
 
-              let ff_flt a = error_uniop "svd" (pack_elt a)
+              let op_s a = error_uniop "svd" (pack_elt a)
 
-              let ff_arr a =
+              let op_a a =
                 let u, s, vt = A.(Linalg.svd ~thin a) in
                 Arr u, Arr s, Arr vt
 
@@ -1848,7 +1848,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "sylvester"
 
-             let ff a =
+             let op a =
                match unpack a with
                | Arr a, Arr b, Arr c -> A.Linalg.sylvester a b c |> pack_arr
                | _                   -> error_uniop "sylvester" a.(0)
@@ -1893,31 +1893,31 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
            (module struct
              let label = "lyapunov"
 
-             let ff_flt_flt a _q = error_uniop label (pack_elt a)
+             let op_ss a _q = error_uniop label (pack_elt a)
 
-             let ff_flt_arr a _q = error_uniop label (pack_elt a)
+             let op_sa a _q = error_uniop label (pack_elt a)
 
-             let ff_arr_flt _a q = error_uniop label (pack_elt q)
+             let op_as _a q = error_uniop label (pack_elt q)
 
-             let ff_arr_arr a q = Arr A.(Linalg.lyapunov a q)
+             let op_aa a q = Arr A.(Linalg.lyapunov a q)
 
-             let df_a cp ap at _qp =
+             let df_1 cp ap at _qp =
                let tmp = at *@ cp in
                lyapunov ap (neg (tmp + transpose tmp))
 
 
-             let df_b _cp ap _qp qt =
+             let df_2 _cp ap _qp qt =
                let qt = pack_flt 0.5 * (qt + transpose qt) in
                lyapunov ap qt
 
 
-             let df_ab cp ap at _qp qt =
+             let df_12 cp ap at _qp qt =
                let qt = pack_flt 0.5 * (qt + transpose qt) in
                let tmp = at *@ cp in
                lyapunov ap (neg (tmp + transpose tmp)) + lyapunov ap qt
 
 
-             let dr_ab a _b cp ca =
+             let dr_12 a _b cp ca =
                let cbar =
                  let cbar = !ca in
                  pack_flt 0.5 * (cbar + transpose cbar)
@@ -1926,7 +1926,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                abar, qbar
 
 
-             let dr_a a _q cp ca =
+             let dr_1 a _q cp ca =
                let cbar =
                  let cbar = !ca in
                  pack_flt 0.5 * (cbar + transpose cbar)
@@ -1934,7 +1934,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                _lyapunov_backward_a a cbar cp
 
 
-             let dr_b a _q _cp ca =
+             let dr_2 a _q _cp ca =
                let cbar =
                  let cbar = !ca in
                  pack_flt 0.5 * (cbar + transpose cbar)
@@ -1961,27 +1961,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "discrete_lyapunov"
 
-              let ff_flt_flt a _q = error_uniop label (pack_elt a)
+              let op_ss a _q = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _q = error_uniop label (pack_elt a)
+              let op_sa a _q = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a q = error_uniop label (pack_elt q)
+              let op_as _a q = error_uniop label (pack_elt q)
 
-              let ff_arr_arr a q = Arr A.(Linalg.discrete_lyapunov ~solver a q)
+              let op_aa a q = Arr A.(Linalg.discrete_lyapunov ~solver a q)
 
-              let df_a cp ap at _qp =
+              let df_1 cp ap at _qp =
                 let g = ap *@ cp *@ transpose at in
                 discrete_lyapunov ap (g + transpose g)
 
 
-              let df_b _cp ap _qp qt = discrete_lyapunov ap qt
+              let df_2 _cp ap _qp qt = discrete_lyapunov ap qt
 
-              let df_ab cp ap at _qp qt =
+              let df_12 cp ap at _qp qt =
                 let g = ap *@ cp *@ transpose at in
                 discrete_lyapunov ap (g + transpose g) + discrete_lyapunov ap qt
 
 
-              let dr_ab a _b cp ca =
+              let dr_12 a _b cp ca =
                 let cbar =
                   let cbar = !ca in
                   pack_flt 0.5 * (cbar + transpose cbar)
@@ -1990,7 +1990,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                 abar, qbar
 
 
-              let dr_a a _q cp ca =
+              let dr_1 a _q cp ca =
                 let cbar =
                   let cbar = !ca in
                   pack_flt 0.5 * (cbar + transpose cbar)
@@ -1998,7 +1998,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
                 _discrete_lyapunov_backward_a a cbar cp
 
 
-              let dr_b a _q _cp ca =
+              let dr_2 a _q _cp ca =
                 let cbar =
                   let cbar = !ca in
                   pack_flt 0.5 * (cbar + transpose cbar)
@@ -2029,43 +2029,43 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "linsolve"
 
-              let ff_flt_flt a _q = error_uniop label (pack_elt a)
+              let op_ss a _q = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _q = error_uniop label (pack_elt a)
+              let op_sa a _q = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a q = error_uniop label (pack_elt q)
+              let op_as _a q = error_uniop label (pack_elt q)
 
-              let ff_arr_arr a q = Arr A.(Linalg.linsolve ~trans ~typ a q)
+              let op_aa a q = Arr A.(Linalg.linsolve ~trans ~typ a q)
 
-              let df_a cp ap at _qp =
+              let df_1 cp ap at _qp =
                 linsolve
                   ~trans
                   ap
                   (if trans then neg (transpose at) *@ cp else neg at *@ cp)
 
 
-              let df_b _cp ap _bp bt = linsolve ~trans ap bt
+              let df_2 _cp ap _bp bt = linsolve ~trans ap bt
 
-              let df_ab cp ap at _bp bt =
+              let df_12 cp ap at _bp bt =
                 linsolve
                   ~trans
                   ap
                   (if trans then bt - (transpose at *@ cp) else bt - (at *@ cp))
 
 
-              let dr_ab a _b cp ca =
+              let dr_12 a _b cp ca =
                 let bbar = _linsolve_backward_b trans typ a !ca in
                 let abar = _linsolve_backward_a trans typ cp bbar in
                 abar, bbar
 
 
-              let dr_a a _b cp ca =
+              let dr_1 a _b cp ca =
                 let bbar = _linsolve_backward_b trans typ a !ca in
                 let abar = _linsolve_backward_a trans typ cp bbar in
                 abar
 
 
-              let dr_b a _b _cp ca = _linsolve_backward_b trans typ a !ca
+              let dr_2 a _b _cp ca = _linsolve_backward_b trans typ a !ca
             end : Piso))
 
 
@@ -2127,7 +2127,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
              (module struct
                let label = "care"
 
-               let ff a =
+               let op a =
                  match unpack a with
                  | Arr a, Arr b, Arr q, Arr r -> A.Linalg.care ~diag_r a b q r |> pack_arr
                  | _                          -> error_uniop "care" a.(0)
@@ -2196,27 +2196,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "conv1d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(conv1d ?padding a b s)
+              let op_aa a b = Arr A.(conv1d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 conv1d_backward_input a b s !ca, conv1d_backward_kernel a b s !ca
 
 
-              let dr_a a b _cp ca = conv1d_backward_input a b s !ca
+              let dr_1 a b _cp ca = conv1d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = conv1d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = conv1d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2246,27 +2246,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "conv2d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(conv2d ?padding a b s)
+              let op_aa a b = Arr A.(conv2d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 conv2d_backward_input a b s !ca, conv2d_backward_kernel a b s !ca
 
 
-              let dr_a a b _cp ca = conv2d_backward_input a b s !ca
+              let dr_1 a b _cp ca = conv2d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = conv2d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = conv2d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2295,27 +2295,27 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "conv3d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(conv3d ?padding a b s)
+              let op_aa a b = Arr A.(conv3d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 conv3d_backward_input a b s !ca, conv3d_backward_kernel a b s !ca
 
 
-              let dr_a a b _cp ca = conv3d_backward_input a b s !ca
+              let dr_1 a b _cp ca = conv3d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = conv3d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = conv3d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2344,28 +2344,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "dilated_conv1d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(dilated_conv1d ?padding a b s r)
+              let op_aa a b = Arr A.(dilated_conv1d ?padding a b s r)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( dilated_conv1d_backward_input a b s r !ca
                 , dilated_conv1d_backward_kernel a b s r !ca )
 
 
-              let dr_a a b _cp ca = dilated_conv1d_backward_input a b s r !ca
+              let dr_1 a b _cp ca = dilated_conv1d_backward_input a b s r !ca
 
-              let dr_b a b _cp ca = dilated_conv1d_backward_kernel a b s r !ca
+              let dr_2 a b _cp ca = dilated_conv1d_backward_kernel a b s r !ca
             end : Piso)
             a
             b)
@@ -2394,28 +2394,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "dilated_conv2d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(dilated_conv2d ?padding a b s r)
+              let op_aa a b = Arr A.(dilated_conv2d ?padding a b s r)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( dilated_conv2d_backward_input a b s r !ca
                 , dilated_conv2d_backward_kernel a b s r !ca )
 
 
-              let dr_a a b _cp ca = dilated_conv2d_backward_input a b s r !ca
+              let dr_1 a b _cp ca = dilated_conv2d_backward_input a b s r !ca
 
-              let dr_b a b _cp ca = dilated_conv2d_backward_kernel a b s r !ca
+              let dr_2 a b _cp ca = dilated_conv2d_backward_kernel a b s r !ca
             end : Piso)
             a
             b)
@@ -2444,28 +2444,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "dilated_conv3d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(dilated_conv3d ?padding a b s r)
+              let op_aa a b = Arr A.(dilated_conv3d ?padding a b s r)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( dilated_conv3d_backward_input a b s r !ca
                 , dilated_conv3d_backward_kernel a b s r !ca )
 
 
-              let dr_a a b _cp ca = dilated_conv3d_backward_input a b s r !ca
+              let dr_1 a b _cp ca = dilated_conv3d_backward_input a b s r !ca
 
-              let dr_b a b _cp ca = dilated_conv3d_backward_kernel a b s r !ca
+              let dr_2 a b _cp ca = dilated_conv3d_backward_kernel a b s r !ca
             end : Piso)
             a
             b)
@@ -2494,28 +2494,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "transpose_conv1d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(transpose_conv1d ?padding a b s)
+              let op_aa a b = Arr A.(transpose_conv1d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( transpose_conv1d_backward_input a b s !ca
                 , transpose_conv1d_backward_kernel a b s !ca )
 
 
-              let dr_a a b _cp ca = transpose_conv1d_backward_input a b s !ca
+              let dr_1 a b _cp ca = transpose_conv1d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = transpose_conv1d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = transpose_conv1d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2544,28 +2544,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "transpose_conv2d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(transpose_conv2d ?padding a b s)
+              let op_aa a b = Arr A.(transpose_conv2d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( transpose_conv2d_backward_input a b s !ca
                 , transpose_conv2d_backward_kernel a b s !ca )
 
 
-              let dr_a a b _cp ca = transpose_conv2d_backward_input a b s !ca
+              let dr_1 a b _cp ca = transpose_conv2d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = transpose_conv2d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = transpose_conv2d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2594,28 +2594,28 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "transpose_conv3d"
 
-              let ff_flt_flt a _b = error_uniop label (pack_elt a)
+              let op_ss a _b = error_uniop label (pack_elt a)
 
-              let ff_flt_arr a _b = error_uniop label (pack_elt a)
+              let op_sa a _b = error_uniop label (pack_elt a)
 
-              let ff_arr_flt _a b = error_uniop label (pack_elt b)
+              let op_as _a b = error_uniop label (pack_elt b)
 
-              let ff_arr_arr a b = Arr A.(transpose_conv3d ?padding a b s)
+              let op_aa a b = Arr A.(transpose_conv3d ?padding a b s)
 
-              let df_a _cp _ap at _bp = at
+              let df_1 _cp _ap at _bp = at
 
-              let df_b _cp _ap _bp bt = bt
+              let df_2 _cp _ap _bp bt = bt
 
-              let df_ab _cp _ap at _bp bt = at + bt
+              let df_12 _cp _ap at _bp bt = at + bt
 
-              let dr_ab a b _cp ca =
+              let dr_12 a b _cp ca =
                 ( transpose_conv3d_backward_input a b s !ca
                 , transpose_conv3d_backward_kernel a b s !ca )
 
 
-              let dr_a a b _cp ca = transpose_conv3d_backward_input a b s !ca
+              let dr_1 a b _cp ca = transpose_conv3d_backward_input a b s !ca
 
-              let dr_b a b _cp ca = transpose_conv3d_backward_kernel a b s !ca
+              let dr_2 a b _cp ca = transpose_conv3d_backward_kernel a b s !ca
             end : Piso)
             a
             b)
@@ -2637,9 +2637,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "max_pool1d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(max_pool1d ~padding a b s)
+              let op_a a = Arr A.(max_pool1d ~padding a b s)
 
               let df _cp _ap _at = failwith "max_pool1d:df"
 
@@ -2664,9 +2664,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "max_pool2d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(max_pool2d ~padding a b s)
+              let op_a a = Arr A.(max_pool2d ~padding a b s)
 
               let df _cp _ap _at = failwith "max_pool2d:df"
 
@@ -2691,9 +2691,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "max_pool3d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(max_pool3d ~padding a b s)
+              let op_a a = Arr A.(max_pool3d ~padding a b s)
 
               let df _cp _ap _at = failwith "max_pool3d:df"
 
@@ -2718,9 +2718,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "avg_pool1d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(avg_pool1d ~padding a b s)
+              let op_a a = Arr A.(avg_pool1d ~padding a b s)
 
               let df _cp _ap _at = failwith "avg_pool1d:df"
 
@@ -2745,9 +2745,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "avg_pool2d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(avg_pool2d ~padding a b s)
+              let op_a a = Arr A.(avg_pool2d ~padding a b s)
 
               let df _cp _ap _at = failwith "avg_pool2d:df"
 
@@ -2772,9 +2772,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "avg_pool3d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(avg_pool3d ~padding a b s)
+              let op_a a = Arr A.(avg_pool3d ~padding a b s)
 
               let df _cp _ap _at = failwith "avg_pool3d:df"
 
@@ -2799,9 +2799,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "upsampling2d"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(upsampling2d a s)
+              let op_a a = Arr A.(upsampling2d a s)
 
               let df _cp _ap _at = failwith "upsampling2d:df"
 
@@ -2831,9 +2831,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (module struct
               let label = "pad"
 
-              let ff_flt a = error_uniop label (pack_elt a)
+              let op_s a = error_uniop label (pack_elt a)
 
-              let ff_arr a = Arr A.(pad ?v p a)
+              let op_a a = Arr A.(pad ?v p a)
 
               let df _cp _ap _at = failwith "pad:df"
 
