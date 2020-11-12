@@ -1,4 +1,5 @@
 (** Unit test for Algodiff module *)
+let () = Printexc.record_backtrace true
 
 open Owl_types
 
@@ -9,7 +10,7 @@ module Make (M : Ndarray_Algodiff with type elt = float) = struct
   module AlgoM = Owl.Algodiff.D
   open AlgoM
 
-  let n = 3
+  let n = 4
 
   let n_samples = 20
 
@@ -152,8 +153,8 @@ module Make (M : Ndarray_Algodiff with type elt = float) = struct
 
     let split () =
       let f x =
-        let a = Maths.split ~axis:0 [| 1; 1; 1 |] x in
-        Maths.(a.(0) + (a.(1) * a.(2)))
+        let a = Maths.split ~axis:0 [| 2; 2 |] x in
+        Maths.(a.(0) + (a.(1) * a.(0)))
       in
       test_func f
 
@@ -316,6 +317,120 @@ module Make (M : Ndarray_Algodiff with type elt = float) = struct
       test_func f
 
 
+    let test_aiao =
+      let care =
+        let unpack a = a.(0), a.(1), a.(2), a.(3) in
+        let care_forward ~diag_r p a b r at bt qt rt =
+          let open Maths in
+          let tr_b = transpose b in
+          let r = if diag_r then diag r else r in
+          let inv_r = if diag_r then F 1. / r else inv r in
+          let atilde =
+            if diag_r then a - (b * inv_r *@ tr_b *@ p) else a - (b *@ inv_r *@ tr_b *@ p)
+          in
+          let tr_atilde = transpose atilde in
+          let dp_da () =
+            let pat = p *@ at in
+            Linalg.lyapunov tr_atilde (neg (transpose pat) - pat)
+          in
+          let dp_dq () = Linalg.lyapunov tr_atilde (neg qt) in
+          let dp_dr () =
+            let pbinv_r = if diag_r then p *@ (b * inv_r) else p *@ b *@ inv_r in
+            Linalg.lyapunov tr_atilde (neg (pbinv_r *@ rt *@ transpose pbinv_r))
+          in
+          let dp_db () =
+            let x =
+              if diag_r
+              then p *@ (bt * inv_r) *@ tr_b *@ p
+              else p *@ bt *@ inv_r *@ tr_b *@ p
+            in
+            Linalg.lyapunov tr_atilde (x + transpose x)
+          in
+          [| dp_da; dp_db; dp_dq; dp_dr |]
+        in
+        let care_backward ~diag_r a b _q r p pbar =
+          let open Maths in
+          let tr_b = transpose b in
+          let inv_r = if diag_r then F 1. / diag r else inv r in
+          let atilde =
+            if diag_r then a - (b * inv_r *@ tr_b *@ p) else a - (b *@ inv_r *@ tr_b *@ p)
+          in
+          let s = Linalg.lyapunov atilde (neg pbar) in
+          (* the following calculations are not calculated unless needed *)
+          let qbar () = s in
+          let rbar () =
+            let pbinv_r = if diag_r then p *@ (b * inv_r) else p *@ b *@ inv_r in
+            transpose pbinv_r *@ s *@ pbinv_r
+          in
+          let abar () = F 2. * p *@ s in
+          let bbar () =
+            if diag_r
+            then neg (F 2.) * p *@ s *@ p *@ (b * inv_r)
+            else neg (F 2.) * p *@ s *@ p *@ b *@ inv_r
+          in
+          [| abar; bbar; qbar; rbar |]
+        in
+        fun ~diag_r ->
+          Builder.build_aiao
+            (module struct
+              let label = "care_aiso_test"
+
+              let ff a =
+                match unpack a with
+                | Arr a, Arr b, Arr q, Arr r ->
+                  let z = Owl.Linalg.D.care ~diag_r a b q r in
+                  Owl.Mat.split ~axis:1 [| n / 2; n / 2 |] z |> Array.map pack_arr
+                | _                          -> failwith "this should not happen"
+
+
+              let df idxs ps inp tangents =
+                let p = Maths.concatenate ~axis:1 ps in
+                let a, b, _, r = unpack inp in
+                let at, bt, qt, rt = unpack tangents in
+                let dp = care_forward ~diag_r p a b r at bt qt rt in
+                let g =
+                  List.map (fun k -> dp.(k) ()) idxs |> List.fold_left Maths.add (F 0.)
+                in
+                Maths.split ~axis:1 [| n / 2; n / 2 |] g
+
+
+              let dr idxs inp p_arr_ref pbar_arr_ref =
+                let pbar =
+                  let pbar =
+                    Maths.concatenate ~axis:1 (Array.map (fun x -> !x) pbar_arr_ref)
+                  in
+                  Maths.(F 0.5 * (pbar + transpose pbar))
+                in
+                let p = Maths.concatenate ~axis:1 (Array.map (fun x -> !x) p_arr_ref) in
+                let bars =
+                  let a, b, q, r = unpack inp in
+                  care_backward ~diag_r a b q r p pbar
+                in
+                List.map (fun k -> bars.(k) ()) idxs
+            end : Builder.Aiao)
+      in
+      let ff =
+        let b = Mat.gaussian n n in
+        let q = Mat.gaussian n n in
+        fun x ->
+          let a = x in
+          let b = Maths.(tril x + b) in
+          let r =
+            let e = Mat.eye n in
+            let r = Maths.(e + (a *@ transpose a)) in
+            Maths.(r *@ transpose r)
+          in
+          let q =
+            let q = Maths.(q + a) in
+            Maths.((q *@ transpose q) + Mat.(eye n))
+          in
+          let c1 = care ~diag_r:false [| a; b; q; r |] in
+          let c2 = care ~diag_r:true [| a; b; q; Maths.(diagm (diag r)) |] in
+          Maths.(sum' (c1.(0) + c1.(1) + c2.(1) - c2.(0)))
+      in
+      fun () -> test_func ff
+
+
     let nested_grad1 () =
       let x = Mat.gaussian 1 (n * n) in
       let r ~theta x = Maths.(sum' (sqr x *@ transpose (theta * theta))) in
@@ -344,7 +459,7 @@ module Make (M : Ndarray_Algodiff with type elt = float) = struct
       ; "sylvester", sylvester; "lyapunov", lyapunov
       ; "discrete_lyapunov", discrete_lyapunov; "linsolve", linsolve
       ; "linsolve_triangular", linsolve_triangular; "care", care
-      ; "log_sum_exp'", log_sum_exp'; "log_sum_exp", log_sum_exp
+      ; "log_sum_exp'", log_sum_exp'; "log_sum_exp", log_sum_exp; "test_aiao", test_aiao
       ; "nested_grad1", nested_grad1 ]
       |> List.fold_left
            (fun (b, error_msg) (s, f) ->
