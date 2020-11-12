@@ -20,7 +20,9 @@ module type Sig = sig
 
   and register = t list -> t list
 
-  and label = string * t list
+  and label = string
 
-  and op = adjoint * register * label
+  and parents = t list
+
+  and op = adjoint * register * label * parents
 end

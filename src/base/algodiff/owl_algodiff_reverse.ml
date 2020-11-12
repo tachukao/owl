@@ -19,7 +19,7 @@ struct
       | []     -> ()
       | x :: t ->
         (match x with
-        | DR (_cp, aa, (_, register, _), fanout, _ai) ->
+        | DR (_cp, aa, (_, register, _, _), fanout, _ai) ->
           aa := reset_zero !aa;
           fanout := succ !fanout;
           if !fanout = 1 then reset (register t) else reset t
@@ -34,7 +34,7 @@ struct
       | []          -> ()
       | (v, x) :: t ->
         (match x with
-        | DR (cp, aa, (adjoint, _, _), fanout, _ai) ->
+        | DR (cp, aa, (adjoint, _, _, _), fanout, _ai) ->
           aa := reverse_add !aa v;
           if !fanout = 1
           then push (adjoint cp aa t)

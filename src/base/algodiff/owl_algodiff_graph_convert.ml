@@ -22,7 +22,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         then (
           let op, prev =
             match hd with
-            | DR (_ap, _aa, (_, _, label), _af, _ai) -> label
+            | DR (_ap, _aa, (_, _, label, parents), _af, _ai) -> label, parents
             | F _a -> Printf.sprintf "Const", []
             | Arr _a -> Printf.sprintf "Const", []
             | DF (_, _, _) -> Printf.sprintf "DF", []

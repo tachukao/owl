@@ -43,8 +43,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         let r a =
           let adjoint cp ca t = (S.dr (primal a) cp ca, a) :: t in
           let register t = a :: t in
-          let label = S.label, [ a ] in
-          adjoint, register, label
+          let label = S.label in
+          let parents = [ a ] in
+          adjoint, register, label, parents
         in
         op_siso ~ff ~f ~df:S.df ~r a
       in
@@ -95,8 +96,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         let r (a, cp_ref, ca_ref) =
           let adjoint cp _ca t = (S.dr (primal a) cp cp_ref ca_ref, a) :: t in
           let register t = a :: t in
-          let label = S.label, [ a ] in
-          adjoint, register, label
+          let label = S.label in
+          let parents = [ a ] in
+          adjoint, register, label, parents
         in
         op_sipo ~ff ~f ~df ~r a
       in
@@ -162,8 +164,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         let r (a, cp_ref, ca_ref) =
           let adjoint cp _ca t = (S.dr (primal a) cp cp_ref ca_ref, a) :: t in
           let register t = a :: t in
-          let label = S.label, [ a ] in
-          adjoint, register, label
+          let label = S.label in
+          let parents = [ a ] in
+          adjoint, register, label, parents
         in
         op_sito ~ff ~f ~df ~r a
       in
@@ -211,8 +214,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         let r (a, cp_arr_ref, ca_arr_ref) =
           let adjoint cp _ca_ref t = (S.dr (primal a) cp cp_arr_ref ca_arr_ref, a) :: t in
           let register t = a :: t in
-          let label = S.label, [ a ] in
-          adjoint, register, label
+          let label = S.label in
+          let parents = [ a ] in
+          adjoint, register, label, parents
         in
         op_siao ~ff ~f ~df ~r a
       in
@@ -329,20 +333,23 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
             (abar, a) :: (bbar, b) :: t
           in
           let register t = a :: b :: t in
-          let label = S.label ^ "_d_d", [ a; b ] in
-          adjoint, register, label
+          let label = S.label ^ "_d_d" in
+          let parents = [ a; b ] in
+          adjoint, register, label, parents
         in
         let r_d_c a b =
           let adjoint cp ca_ref t = (S.dr_a (primal a) b cp ca_ref, a) :: t in
           let register t = a :: t in
-          let label = S.label ^ "_d_c", [ a; b ] in
-          adjoint, register, label
+          let label = S.label ^ "_d_c" in
+          let parents = [ a; b ] in
+          adjoint, register, label, parents
         in
         let r_c_d a b =
           let adjoint cp ca_ref t = (S.dr_b a (primal b) cp ca_ref, b) :: t in
           let register t = b :: t in
-          let label = S.label ^ "_c_d", [ a; b ] in
-          adjoint, register, label
+          let label = S.label ^ "_c_d" in
+          let parents = [ a; b ] in
+          adjoint, register, label, parents
         in
         op_piso
           ~ff
@@ -441,8 +448,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
         in
         let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
-        let label = S.label, List.(map (fun i -> a.(i)) idxs) in
-        DR (cp, ref (zero cp), (adjoint, register, label), ref 0, t)
+        let label = S.label in
+        let parents = List.(map (fun i -> a.(i)) idxs) in
+        DR (cp, ref (zero cp), (adjoint, register, label, parents), ref 0, t)
     in
     f
 
@@ -500,8 +508,9 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
               List.append List.(mapi (fun i k -> ar.(i), a.(k)) idxs) t
             in
             let register t = List.fold_left (fun t i -> a.(i) :: t) t idxs in
-            let label = S.label, List.(map (fun i -> a.(i)) idxs) in
-            DR (cp, ca_ref, (adjoint, register, label), fanout, t))
+            let label = S.label in
+            let parents = List.(map (fun i -> a.(i)) idxs) in
+            DR (cp, ca_ref, (adjoint, register, label, parents), fanout, t))
           cp_arr
           ca_ref_arr
     in

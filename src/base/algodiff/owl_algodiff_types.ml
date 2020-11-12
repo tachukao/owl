@@ -16,7 +16,9 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
 
   and register = t list -> t list
 
-  and label = string * t list
+  and label = string
 
-  and op = adjoint * register * label
+  and parents = t list
+
+  and op = adjoint * register * label * parents
 end

@@ -39,8 +39,9 @@ module Make (A : Owl_types_ndarray_algodiff.Sig) = struct
   let make_reverse p i =
     let adjoint _cp _ca t = t in
     let register t = t in
-    let label = "Noop", [] in
-    DR (p, ref (zero p), (adjoint, register, label), ref 0, i)
+    let label = "Noop" in
+    let parents = [] in
+    DR (p, ref (zero p), (adjoint, register, label, parents), ref 0, i)
 
 
   (* expose reverse prop: propagate gradients *)
