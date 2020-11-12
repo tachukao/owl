@@ -15,12 +15,16 @@ module type Sig = sig
   module type Siso = sig
     val label : string
 
-    val ff_f : elt -> t
+    (* primal op: input is a scalar *)
+    val ff_flt : elt -> t
 
+    (* primal op: input is an arr *)
     val ff_arr : arr -> t
 
+    (* forward-mode gradient *)
     val df : t -> t -> t -> t
 
+    (* reverse-mode gradient *)
     val dr : t -> t -> t ref -> t
   end
 
@@ -30,12 +34,16 @@ module type Sig = sig
   module type Sipo = sig
     val label : string
 
-    val ff_f : elt -> t * t
+    (* primal op: input is a scalar *)
+    val ff_flt : elt -> t * t
 
+    (* primal op: input is a arr *)
     val ff_arr : arr -> t * t
 
+    (* forward-mode gradient *)
     val df : t -> t -> t -> t
 
+    (* reverse-mode gradient *)
     val dr : t -> t -> t ref * t ref -> t ref * t ref -> t
   end
 
@@ -45,12 +53,16 @@ module type Sig = sig
   module type Sito = sig
     val label : string
 
-    val ff_f : elt -> t * t * t
+    (* primal op: input is a scalar *)
+    val ff_flt : elt -> t * t * t
 
+    (* primal op: input is arr *)
     val ff_arr : arr -> t * t * t
 
+    (* forward-mode gradient *)
     val df : t -> t -> t -> t
 
+    (* reverse-mode gradient *)
     val dr : t -> t -> t ref * t ref * t ref -> t ref * t ref * t ref -> t
   end
 
@@ -60,12 +72,16 @@ module type Sig = sig
   module type Siao = sig
     val label : string
 
-    val ff_f : elt -> t array
+    (* primal op: input is scalar *)
+    val ff_flt : elt -> t array
 
+    (* primal op: input is arr *)
     val ff_arr : arr -> t array
 
+    (* forward-mode gradient *)
     val df : t -> t -> t -> t
 
+    (* reverse-mode gradient *)
     val dr : t -> t -> t ref array -> t ref array -> t
   end
 
@@ -75,24 +91,34 @@ module type Sig = sig
   module type Piso = sig
     val label : string
 
-    val ff_aa : elt -> elt -> t
+    (* primal op: input is (scalar, scalar) *)
+    val ff_flt_flt : elt -> elt -> t
 
-    val ff_ab : elt -> arr -> t
+    (* primal op: input is (scalar, arr) *)
+    val ff_flt_arr : elt -> arr -> t
 
-    val ff_ba : arr -> elt -> t
+    (* primal op: input is (arr, scalar) *)
+    val ff_arr_flt : arr -> elt -> t
 
-    val ff_bb : arr -> arr -> t
+    (* primal op: input is (arr, arr) *)
+    val ff_arr_arr : arr -> arr -> t
 
-    val df_da : t -> t -> t -> t -> t
+    (* forward-mode from first input only *)
+    val df_a : t -> t -> t -> t -> t
 
-    val df_db : t -> t -> t -> t -> t
+    (* forward-mode from second input only *)
+    val df_b : t -> t -> t -> t -> t
 
-    val df_dab : t -> t -> t -> t -> t -> t
+    (* forward-mode from both inputs *)
+    val df_ab : t -> t -> t -> t -> t -> t
 
+    (* reverse-mode for both inputs *)
     val dr_ab : t -> t -> t -> t ref -> t * t
 
+    (* reverse-mode for first input only *)
     val dr_a : t -> t -> t -> t ref -> t
 
+    (* reverse-mode for second input only *)
     val dr_b : t -> t -> t -> t ref -> t
   end
 
@@ -102,10 +128,13 @@ module type Sig = sig
   module type Aiso = sig
     val label : string
 
+    (* primal ops *)
     val ff : t array -> t
 
+    (* forward-mode *)
     val df : int list -> t -> t array -> t array -> t
 
+    (* reverse-mode *)
     val dr : int list -> t array -> t -> t ref -> t list
   end
 
@@ -115,10 +144,13 @@ module type Sig = sig
   module type Aiao = sig
     val label : string
 
+    (* primal ops *)
     val ff : t array -> t array
 
+    (* forward-mode *)
     val df : int list -> t array -> t array -> t array -> t array
 
+    (* reverse-mode *)
     val dr : int list -> t array -> t ref array -> t ref array -> t list
   end
 

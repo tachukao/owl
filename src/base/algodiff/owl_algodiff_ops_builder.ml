@@ -11,7 +11,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
   module type Siso = sig
     val label : string
 
-    val ff_f : A.elt -> t
+    val ff_flt : A.elt -> t
 
     val ff_arr : A.arr -> t
 
@@ -36,7 +36,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       let rec f a =
         let open S in
         let ff = function
-          | F a   -> S.ff_f a
+          | F a   -> S.ff_flt a
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
@@ -55,7 +55,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
   module type Sipo = sig
     val label : string
 
-    val ff_f : A.elt -> t * t
+    val ff_flt : A.elt -> t * t
 
     val ff_arr : A.arr -> t * t
 
@@ -89,7 +89,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       let rec f a =
         let open S in
         let ff = function
-          | F a   -> S.ff_f a
+          | F a   -> S.ff_flt a
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
@@ -108,7 +108,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
   module type Sito = sig
     val label : string
 
-    val ff_f : A.elt -> t * t * t
+    val ff_flt : A.elt -> t * t * t
 
     val ff_arr : A.arr -> t * t * t
 
@@ -157,7 +157,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       let rec f a =
         let open S in
         let ff = function
-          | F a   -> S.ff_f a
+          | F a   -> S.ff_flt a
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
@@ -176,7 +176,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
   module type Siao = sig
     val label : string
 
-    val ff_f : A.elt -> t array
+    val ff_flt : A.elt -> t array
 
     val ff_arr : A.arr -> t array
 
@@ -207,7 +207,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       let rec f a =
         let open S in
         let ff = function
-          | F a   -> S.ff_f a
+          | F a   -> S.ff_flt a
           | Arr a -> S.ff_arr a
           | _     -> error_uniop label a
         in
@@ -226,19 +226,19 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
   module type Piso = sig
     val label : string
 
-    val ff_aa : A.elt -> A.elt -> t
+    val ff_flt_flt : A.elt -> A.elt -> t
 
-    val ff_ab : A.elt -> A.arr -> t
+    val ff_flt_arr : A.elt -> A.arr -> t
 
-    val ff_ba : A.arr -> A.elt -> t
+    val ff_arr_flt : A.arr -> A.elt -> t
 
-    val ff_bb : A.arr -> A.arr -> t
+    val ff_arr_arr : A.arr -> A.arr -> t
 
-    val df_da : t -> t -> t -> t -> t
+    val df_a : t -> t -> t -> t -> t
 
-    val df_db : t -> t -> t -> t -> t
+    val df_b : t -> t -> t -> t -> t
 
-    val df_dab : t -> t -> t -> t -> t -> t
+    val df_ab : t -> t -> t -> t -> t -> t
 
     val dr_ab : t -> t -> t -> t ref -> t * t
 
@@ -249,20 +249,20 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
 
   let build_piso =
     (* pair input single output operation *)
-    let op_piso ~ff ~f ~df_da ~df_db ~df_dab ~r_d_d ~r_d_c ~r_c_d a b =
+    let op_piso ~ff ~f ~df_a ~df_b ~df_ab ~r_d_d ~r_d_c ~r_c_d a b =
       match a, b with
       | F _ap, DF (bp, bt, bi) ->
         let cp = f a bp in
-        DF (cp, df_db cp a bp bt, bi)
+        DF (cp, df_b cp a bp bt, bi)
       | DF (ap, at, ai), F _bp ->
         let cp = f ap b in
-        DF (cp, df_da cp ap at b, ai)
+        DF (cp, df_a cp ap at b, ai)
       | Arr _ap, DF (bp, bt, bi) ->
         let cp = f a bp in
-        DF (cp, df_db cp a bp bt, bi)
+        DF (cp, df_b cp a bp bt, bi)
       | DF (ap, at, ai), Arr _bp ->
         let cp = f ap b in
-        DF (cp, df_da cp ap at b, ai)
+        DF (cp, df_a cp ap at b, ai)
       | F _ap, DR (bp, _, _, _, bi) ->
         let cp = f a bp in
         DR (cp, ref (zero cp), r_c_d a b, ref 0, bi)
@@ -279,7 +279,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         (match cmp_tag ai bi with
         | 1  ->
           let cp = f ap b in
-          DF (cp, df_da cp ap at b, ai)
+          DF (cp, df_a cp ap at b, ai)
         | -1 ->
           let cp = f a bp in
           DR (cp, ref (zero cp), r_c_d a b, ref 0, bi)
@@ -288,7 +288,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         (match cmp_tag ai bi with
         | -1 ->
           let cp = f a bp in
-          DF (cp, df_db cp a bp bt, bi)
+          DF (cp, df_b cp a bp bt, bi)
         | 1  ->
           let cp = f ap b in
           DR (cp, ref (zero cp), r_d_c a b, ref 0, ai)
@@ -297,13 +297,13 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
         (match cmp_tag ai bi with
         | 0 ->
           let cp = f ap bp in
-          DF (cp, df_dab cp ap at bp bt, ai)
+          DF (cp, df_ab cp ap at bp bt, ai)
         | 1 ->
           let cp = f ap b in
-          DF (cp, df_da cp ap at b, ai)
+          DF (cp, df_a cp ap at b, ai)
         | _ ->
           let cp = f a bp in
-          DF (cp, df_db cp a bp bt, bi))
+          DF (cp, df_b cp a bp bt, bi))
       | DR (ap, _, _, _, ai), DR (bp, _, _, _, bi) ->
         (match cmp_tag ai bi with
         | 0 ->
@@ -321,10 +321,10 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
       let rec f a b =
         let ff a b =
           match a, b with
-          | F a, F b     -> S.ff_aa a b
-          | F a, Arr b   -> S.ff_ab a b
-          | Arr a, F b   -> S.ff_ba a b
-          | Arr a, Arr b -> S.ff_bb a b
+          | F a, F b     -> S.ff_flt_flt a b
+          | F a, Arr b   -> S.ff_flt_arr a b
+          | Arr a, F b   -> S.ff_arr_flt a b
+          | Arr a, Arr b -> S.ff_arr_arr a b
           | _            -> error_binop S.label a b
         in
         let r_d_d a b =
@@ -351,17 +351,7 @@ module Make (Core : Owl_algodiff_core_sig.Sig) = struct
           let parents = [ a; b ] in
           adjoint, register, label, parents
         in
-        op_piso
-          ~ff
-          ~f
-          ~df_da:S.df_da
-          ~df_db:S.df_db
-          ~df_dab:S.df_dab
-          ~r_d_d
-          ~r_d_c
-          ~r_c_d
-          a
-          b
+        op_piso ~ff ~f ~df_a:S.df_a ~df_b:S.df_b ~df_ab:S.df_ab ~r_d_d ~r_d_c ~r_c_d a b
       in
       f
 
